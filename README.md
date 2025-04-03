@@ -1,7 +1,6 @@
 # Stockly-10790Python
 Stockly - Projeto Programação ⇾ Gestão Inventario
 
-
 **Notas:**
 
 Colocar o programa online, para qualquer pessoa puder utilizar? Pode haver problemas com a base de dados? Pesquisar sobre.
