@@ -1,5 +1,5 @@
 # Stockly-10790Python
-stockly- Projeto Programacao - Gestao Inventario
+stockly - Projeto Programação - Gestão Inventario
 
 Notas:
 
