@@ -4,6 +4,7 @@ Stockly - Projeto Programação ⇾ Gestão Inventário
 # Links de trabalho:
 **Docs:** https://docs.google.com/document/d/11_MzBAp5Jw3MxyjOu0yr3ZExloxyqeURfewOYpecQNc/edit?tab=t.0
 **Slides:** https://docs.google.com/presentation/d/1f6pQBbzFHx-6yZXn8CMD1gHWSFqWS9nxWPl1KZZ0iHs/edit#slide=id.p
+**Canva:** https://www.canva.com/design/DAGkDWEMrTE/dF5K80rTtfFWIDSK6G6bnQ/edit
 **Figma:** https://www.figma.com/design/LTtzdOl46O2TJxqjA41Gue/Untitled?node-id=0-1&p=f&t=QGhiTUuR7azmQ92j-0
 
 **Notas:**
