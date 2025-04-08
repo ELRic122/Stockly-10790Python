@@ -10,6 +10,7 @@ Stockly - Projeto Programação ⇾ Gestão Inventário
 
 **Figma:** https://www.figma.com/design/LTtzdOl46O2TJxqjA41Gue/Untitled?node-id=0-1&p=f&t=QGhiTUuR7azmQ92j-0
 
+
 **Notas:**
 
 Colocar o programa online, para qualquer pessoa puder utilizar? Pode haver problemas com a base de dados? Pesquisar sobre.
