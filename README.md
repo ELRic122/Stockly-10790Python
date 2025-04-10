@@ -24,3 +24,5 @@ PyQt6 website oficial (https://pypi.org/project/PyQt6/) ⇾ necessário para tor
 Exemplos PyQt GitHub (https://github.com/pyqt/examples) ⇾ Exemplos PyQt.
 
 Pushing changes without fucking the master branch(https://gist.github.com/abelcallejo/a7f35d9277417560b4c5a7178f8677d1) ⇾ criar branches sem rebentar o código principal.
+
+https://www.reddit.com/r/technicalwriting/comments/113mh5p/technical_documentation_templatessamplesexamples/?rdt=64523 ⇾ Documentação Técnica
