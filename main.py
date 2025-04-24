@@ -1,7 +1,8 @@
 import sys
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QLineEdit, QWidget, QVBoxLayout
-from  PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import Qt
 
 # QMainWindow -  Janela Principal
 # QWidget - "Blocos" dentro da janela ex.: botoes, caixas de texto, labels...
@@ -11,36 +12,70 @@ from PyQt5.QtCore import pyqtSlot
 
 class MainMenu(QMainWindow):
     def __init__(self):
-        super().__init__() # serve para inicializar a janela
-        self.setWindowTitle('Stockly - Gestao de Inventario') 
-        self.setGeometry(70, 50, 1800, 1000) # tamanho da janela
+        super().__init__()
+        self.setWindowTitle('Stockly - Gestão de Inventário') 
+        self.setGeometry(70, 50, 1800, 1000)
 
-        self.centralWidget = QWidget(self) # cria um widget central
+        self.centralWidget = QWidget(self)
         self.setCentralWidget(self.centralWidget)
 
-        layout = QVBoxLayout(self.centralWidget) # cria um layout vertical dentro do widget central
+        # Layout principal horizontal
+        mainLayout = QHBoxLayout(self.centralWidget)
+        mainLayout.setAlignment(Qt.AlignCenter)
 
-        # Botoes
-        self.button1 = QPushButton('Inserir Registos', self)
-        self.button2 = QPushButton('Apagar Registos', self)
-        self.button3 = QPushButton('Visualizar Registos', self)
-        self.button4 = QPushButton('Alterar Registos', self)
+        # Layouts verticais para os botões
+        leftLayout = QVBoxLayout()
+        rightLayout = QVBoxLayout()
 
-        # Funcoes dos botoes
-        self.button1.clicked.connect(lambda: self.label.setText('Inserir Registos'))
-        self.button2.clicked.connect(lambda: self.label.setText('Apagar Registos'))
-        self.button3.clicked.connect(lambda: self.label.setText('Visualizar Registos'))
-        self.button4.clicked.connect(lambda: self.label.setText('Alterar Registos'))
+        leftLayout.setAlignment(Qt.AlignVCenter)
+        rightLayout.setAlignment(Qt.AlignVCenter)
+
+        # Botões
+        self.button1 = QPushButton('INSERIR REGISTOS')
+        self.button2 = QPushButton('VISUALIZAR REGISTOS')
+        self.button3 = QPushButton('APAGAR REGISTOS')
+        self.button4 = QPushButton('ALTERAR REGISTOS')
+
+        # Conectar os botões às funções
+        self.button1.clicked.connect(lambda: self.mostrarMensagem("INSERIR REGISTOS"))
+        self.button2.clicked.connect(lambda: self.mostrarMensagem("VISUALIZAR REGISTOS"))
+        self.button3.clicked.connect(lambda: self.mostrarMensagem("APAGAR REGISTOS"))
+        self.button4.clicked.connect(lambda: self.mostrarMensagem("ALTERAR REGISTOS"))
+
+        # Estilo dos botões
+        style = """
+            QPushButton {
+                font-size: 26px;
+                font-weight: bold;
+                padding: 40px;
+                background-color: #1E2A38;
+                color: white;
+                border-radius: 15px;
+            }
+            QPushButton:hover {
+                background-color: #2F3E50;
+            }
+        """
 
         for btn in [self.button1, self.button2, self.button3, self.button4]:
-            btn.setStyleSheet('font-size: 16px; padding: 10px;') # define o estilo dos botoes
-            layout.addWidget(btn)
-
-        # Layout no widget central
-        self.centralWidget.setLayout(layout)
-
-
+            btn.setStyleSheet(style)
         
+
+        # Adicionar botões aos layouts
+        leftLayout.addWidget(self.button1)
+        leftLayout.addSpacing(120)  # Espaço entre botões
+        leftLayout.addWidget(self.button2)
+
+        rightLayout.addWidget(self.button3)
+        rightLayout.addSpacing(120)
+        rightLayout.addWidget(self.button4)
+
+        # Adicionar os layouts ao layout principal
+        mainLayout.addLayout(leftLayout)
+        mainLayout.addSpacing(450)  # Espaço entre as colunas
+        mainLayout.addLayout(rightLayout)
+
+        self.centralWidget.setLayout(mainLayout)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
