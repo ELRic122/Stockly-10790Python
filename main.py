@@ -137,7 +137,20 @@ class InserirMenu(QMainWindow):
         self.button2 = QPushButton('FORNECEDORES')
         self.button3 = QPushButton('STOCK')
         self.button4 = QPushButton('VENDAS')
-        self.buttonBack = QPushButton('VOLTAR')
+        self.buttonBack = QPushButton('←')
+        self.buttonBack.setStyleSheet("""
+            QPushButton {
+                font-size: 40px;
+                font-weight: bold;
+                padding: 20px;
+                background-color: transparent;
+                color: black;
+            }
+            QPushButton:hover {
+                color: #CCCCCC;
+            }
+        """)
+        self.buttonBack.clicked.connect(self.voltarAoMenu)  # Conectar a função de voltar
 
         # Conectar os botões às funções
         self.button1.clicked.connect(lambda: self.mostrarMensagem("CLIENTES"))
