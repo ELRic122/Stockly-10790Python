@@ -427,19 +427,19 @@ class VisualizarClientes(QMainWindow):
         self.setWindowTitle('Stockly - Gestão de Inventário')
         self.setGeometry(70, 50, 1800, 1000)
         self.setWindowIcon(QIcon('icon.png'))
+
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
-
         layout = QVBoxLayout()
-
-        # Criar um layout horizontal para a barra de pesquisa
+        
+        # Layout da barra de pesquisa
         barra_layout = QHBoxLayout()
         barra_layout.setAlignment(Qt.AlignCenter)
 
         frame_pesquisa = QFrame()
         frame_pesquisa.setFixedSize(420, 40)
         frame_pesquisa.setStyleSheet("background-color: transparent;")
-        
+
         self.pesquisa = QLineEdit(frame_pesquisa)
         self.pesquisa.setPlaceholderText("Pesquisar...")
         self.pesquisa.setGeometry(0, 0, 420, 40)
@@ -467,44 +467,52 @@ class VisualizarClientes(QMainWindow):
         """)
 
         barra_layout.addWidget(frame_pesquisa)
-        layout.addSpacing(50)  # Espaço acima da barra para melhor centralização
+        layout.addSpacing(30) 
         layout.addLayout(barra_layout)
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
-        self.tabela = QTableWidget()
+        # Tabela configurada
+        self.configurarTabela()
         self.tabela.setColumnCount(5)
-        self.tabela.setHorizontalHeaderLabels(["ID Cliente","NOMES", "CONTACTOS", "DATA NASCIMENTO", "MORADA"])
-        self.tabela.verticalHeader().setDefaultSectionSize(40)  # Altura fixa das linhas
-        self.tabela.horizontalHeader().setStyleSheet("""
-                QHeaderView::section {
-                background-color: #3c3c3c;
-                color: white;
-                font-weight: bold;
-                border: none;
-                padding: 6px;
-                font-size: 16px;    }
-                """)
-        
+        self.tabela.setHorizontalHeaderLabels(["ID Cliente", "NOMES", "CONTACTOS", "DATA NASCIMENTO", "MORADA"])
+        layout.addWidget(self.tabela)
+
+        self.centralWidget.setLayout(layout)  
+        self.carregarDados()
+
+    def configurarTabela(self):
+        self.tabela = QTableWidget()
+        self.tabela.setFont(QFont("Inter", 12))
+        self.tabela.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.tabela.verticalHeader().setVisible(False)
+        self.tabela.verticalHeader().setDefaultSectionSize(50)
+
         self.tabela.setStyleSheet("""
             QTableWidget {
                 background-color: #2b2b2b;
                 color: white;
                 gridline-color: #444;
                 font-size: 14px;
+                border: none;
+            }
+            QHeaderView::section {
+                background-color: #3c3c3c;
+                color: white;
+                font-weight: bold;
+                border: none;
+                padding: 8px;
+                font-size: 16px;
+            }
+            QTableWidget::item {
+                padding: 10px;
             }
             QTableWidget::item:selected {
                 background-color: #505050;
             }
         """)
 
-        self.tabela.verticalHeader().setVisible(False)
-        self.tabela.setFont(QFont("inter", 12))
-        self.tabela.setEditTriggers(QTableWidget.NoEditTriggers)
-
-        layout.addWidget(self.tabela, stretch=1)  # Permite expansão da tabela
-        self.centralWidget.setLayout(layout)
-
-        self.carregarDados()
+        self.tabela.horizontalHeader().setStretchLastSection(True)
+        self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
     def carregarDados(self):
         conn = conectarBD()
@@ -524,14 +532,12 @@ class VisualizarClientes(QMainWindow):
                     item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
                     self.tabela.setItem(i, j, item)
 
-            self.tabela.resizeRowsToContents()
-            self.tabela.horizontalHeader().setStretchLastSection(True)
-            self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Erro ao carregar dados: {e}")
         finally:
             cursor.close()
             conn.close()
+
 
 class VisualizarFornecedores(QMainWindow):
     def __init__(self):
@@ -539,19 +545,19 @@ class VisualizarFornecedores(QMainWindow):
         self.setWindowTitle('Stockly - Gestão de Inventário')
         self.setGeometry(70, 50, 1800, 1000)
         self.setWindowIcon(QIcon('icon.png'))
+
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
-
         layout = QVBoxLayout()
-
-        # Criar um layout horizontal para a barra de pesquisa
+        
+        # Layout da barra de pesquisa
         barra_layout = QHBoxLayout()
         barra_layout.setAlignment(Qt.AlignCenter)
 
         frame_pesquisa = QFrame()
         frame_pesquisa.setFixedSize(420, 40)
         frame_pesquisa.setStyleSheet("background-color: transparent;")
-        
+
         self.pesquisa = QLineEdit(frame_pesquisa)
         self.pesquisa.setPlaceholderText("Pesquisar...")
         self.pesquisa.setGeometry(0, 0, 420, 40)
@@ -579,43 +585,53 @@ class VisualizarFornecedores(QMainWindow):
         """)
 
         barra_layout.addWidget(frame_pesquisa)
-        layout.addSpacing(50)  # Espaço acima da barra para melhor centralização
+        layout.addSpacing(30) 
         layout.addLayout(barra_layout)
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
-        self.tabela = QTableWidget()
+        # Tabela configurada
+        self.configurarTabela()
         self.tabela.setColumnCount(5)
         self.tabela.setHorizontalHeaderLabels(["ID Fornecedor","NOME", "CONTACTO", "MORADA", "NIF"])
-        self.tabela.horizontalHeader().setStyleSheet("""
-                QHeaderView::section {
-                background-color: #3c3c3c;
-                color: white;
-                font-weight: bold;
-                border: none;
-                padding: 6px;
-                font-size: 16px;    }
-                """)
-        
+        layout.addWidget(self.tabela)
+
+        self.centralWidget.setLayout(layout)  
+        self.carregarDados()
+
+    def configurarTabela(self):
+        self.tabela = QTableWidget()
+        self.tabela.setFont(QFont("Inter", 12))
+        self.tabela.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.tabela.verticalHeader().setVisible(False)
+        self.tabela.verticalHeader().setDefaultSectionSize(50)
+
         self.tabela.setStyleSheet("""
             QTableWidget {
                 background-color: #2b2b2b;
                 color: white;
                 gridline-color: #444;
                 font-size: 14px;
+                border: none;
+            }
+            QHeaderView::section {
+                background-color: #3c3c3c;
+                color: white;
+                font-weight: bold;
+                border: none;
+                padding: 8px;
+                font-size: 16px;
+            }
+            QTableWidget::item {
+                padding: 10px;
             }
             QTableWidget::item:selected {
                 background-color: #505050;
             }
         """)
 
-        self.tabela.verticalHeader().setVisible(False)
-        self.tabela.setFont(QFont("inter", 12))
-        self.tabela.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.tabela.horizontalHeader().setStretchLastSection(True)
+        self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        layout.addWidget(self.tabela, stretch=1)  # Permite expansão da tabela
-        self.centralWidget.setLayout(layout)
-
-        self.carregarDados()
 
     def carregarDados(self):
         conn = conectarBD()
@@ -635,9 +651,6 @@ class VisualizarFornecedores(QMainWindow):
                     item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
                     self.tabela.setItem(i, j, item)
 
-            self.tabela.resizeRowsToContents()
-            self.tabela.horizontalHeader().setStretchLastSection(True)
-            self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Erro ao carregar dados: {e}")
         finally:
@@ -650,19 +663,19 @@ class VisualizarStock(QMainWindow):
         self.setWindowTitle('Stockly - Gestão de Inventário')
         self.setGeometry(70, 50, 1800, 1000)
         self.setWindowIcon(QIcon('icon.png'))
+
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
-
         layout = QVBoxLayout()
-
-        # Criar um layout horizontal para a barra de pesquisa
+        
+        # Layout da barra de pesquisa
         barra_layout = QHBoxLayout()
         barra_layout.setAlignment(Qt.AlignCenter)
 
         frame_pesquisa = QFrame()
         frame_pesquisa.setFixedSize(420, 40)
         frame_pesquisa.setStyleSheet("background-color: transparent;")
-        
+
         self.pesquisa = QLineEdit(frame_pesquisa)
         self.pesquisa.setPlaceholderText("Pesquisar...")
         self.pesquisa.setGeometry(0, 0, 420, 40)
@@ -690,44 +703,52 @@ class VisualizarStock(QMainWindow):
         """)
 
         barra_layout.addWidget(frame_pesquisa)
-        layout.addSpacing(50)  # Espaço acima da barra para melhor centralização
+        layout.addSpacing(30) 
         layout.addLayout(barra_layout)
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
-        self.tabela = QTableWidget()
+        # Tabela configurada
+        self.configurarTabela()
         self.tabela.setColumnCount(5)
         self.tabela.setHorizontalHeaderLabels(["ID STOCK","NOME PRODUTO", "PREÇO DO PRODUTO", "QUANTIDADE", "ID FORNECEDOR"])
-        self.tabela.verticalHeader().setDefaultSectionSize(40)  # Altura fixa das linhas
-        self.tabela.horizontalHeader().setStyleSheet("""
-                QHeaderView::section {
-                background-color: #3c3c3c;
-                color: white;
-                font-weight: bold;
-                border: none;
-                padding: 6px;
-                font-size: 16px;    }
-                """)
-        
+        layout.addWidget(self.tabela)
+
+        self.centralWidget.setLayout(layout)  
+        self.carregarDados()
+
+    def configurarTabela(self):
+        self.tabela = QTableWidget()
+        self.tabela.setFont(QFont("Inter", 12))
+        self.tabela.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.tabela.verticalHeader().setVisible(False)
+        self.tabela.verticalHeader().setDefaultSectionSize(50)
+
         self.tabela.setStyleSheet("""
             QTableWidget {
                 background-color: #2b2b2b;
                 color: white;
                 gridline-color: #444;
                 font-size: 14px;
+                border: none;
+            }
+            QHeaderView::section {
+                background-color: #3c3c3c;
+                color: white;
+                font-weight: bold;
+                border: none;
+                padding: 8px;
+                font-size: 16px;
+            }
+            QTableWidget::item {
+                padding: 10px;
             }
             QTableWidget::item:selected {
                 background-color: #505050;
             }
         """)
 
-        self.tabela.verticalHeader().setVisible(False)
-        self.tabela.setFont(QFont("inter", 12))
-        self.tabela.setEditTriggers(QTableWidget.NoEditTriggers)
-
-        layout.addWidget(self.tabela, stretch=1)  # Permite expansão da tabela
-        self.centralWidget.setLayout(layout)
-
-        self.carregarDados()
+        self.tabela.horizontalHeader().setStretchLastSection(True)
+        self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
     def carregarDados(self):
         conn = conectarBD()
@@ -747,9 +768,6 @@ class VisualizarStock(QMainWindow):
                     item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
                     self.tabela.setItem(i, j, item)
 
-            self.tabela.resizeRowsToContents()
-            self.tabela.horizontalHeader().setStretchLastSection(True)
-            self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Erro ao carregar dados: {e}")
         finally:
@@ -762,19 +780,19 @@ class Visualizarvendas(QMainWindow):
         self.setWindowTitle('Stockly - Gestão de Inventário')
         self.setGeometry(70, 50, 1800, 1000)
         self.setWindowIcon(QIcon('icon.png'))
+
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
-
         layout = QVBoxLayout()
-
-        # Criar um layout horizontal para a barra de pesquisa
+        
+        # Layout da barra de pesquisa
         barra_layout = QHBoxLayout()
         barra_layout.setAlignment(Qt.AlignCenter)
 
         frame_pesquisa = QFrame()
         frame_pesquisa.setFixedSize(420, 40)
         frame_pesquisa.setStyleSheet("background-color: transparent;")
-        
+
         self.pesquisa = QLineEdit(frame_pesquisa)
         self.pesquisa.setPlaceholderText("Pesquisar...")
         self.pesquisa.setGeometry(0, 0, 420, 40)
@@ -802,43 +820,52 @@ class Visualizarvendas(QMainWindow):
         """)
 
         barra_layout.addWidget(frame_pesquisa)
-        layout.addSpacing(50)  # Espaço acima da barra para melhor centralização
+        layout.addSpacing(30) 
         layout.addLayout(barra_layout)
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
-        self.tabela = QTableWidget()
+        # Tabela configurada
+        self.configurarTabela()
         self.tabela.setColumnCount(6)
         self.tabela.setHorizontalHeaderLabels(["ID VENDA","NOME PRODUTO", "PREÇO DA VENDA", "QUANTIDADE DA VENDA", "ID STOCK", "ID CLIENTE"])
-        self.tabela.horizontalHeader().setStyleSheet("""
-                QHeaderView::section {
-                background-color: #3c3c3c;
-                color: white;
-                font-weight: bold;
-                border: none;
-                padding: 6px;
-                font-size: 16px;    }
-                """)
-        
+        layout.addWidget(self.tabela)
+
+        self.centralWidget.setLayout(layout)  
+        self.carregarDados()
+
+    def configurarTabela(self):
+        self.tabela = QTableWidget()
+        self.tabela.setFont(QFont("Inter", 12))
+        self.tabela.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.tabela.verticalHeader().setVisible(False)
+        self.tabela.verticalHeader().setDefaultSectionSize(50)
+
         self.tabela.setStyleSheet("""
             QTableWidget {
                 background-color: #2b2b2b;
                 color: white;
                 gridline-color: #444;
                 font-size: 14px;
+                border: none;
+            }
+            QHeaderView::section {
+                background-color: #3c3c3c;
+                color: white;
+                font-weight: bold;
+                border: none;
+                padding: 8px;
+                font-size: 16px;
+            }
+            QTableWidget::item {
+                padding: 10px;
             }
             QTableWidget::item:selected {
                 background-color: #505050;
             }
         """)
 
-        self.tabela.verticalHeader().setVisible(False)
-        self.tabela.setFont(QFont("inter", 12))
-        self.tabela.setEditTriggers(QTableWidget.NoEditTriggers)
-
-        layout.addWidget(self.tabela, stretch=1)  # Permite expansão da tabela
-        self.centralWidget.setLayout(layout)
-
-        self.carregarDados()
+        self.tabela.horizontalHeader().setStretchLastSection(True)
+        self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
     def carregarDados(self):
         conn = conectarBD()
@@ -858,9 +885,6 @@ class Visualizarvendas(QMainWindow):
                     item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
                     self.tabela.setItem(i, j, item)
 
-            self.tabela.resizeRowsToContents()
-            self.tabela.horizontalHeader().setStretchLastSection(True)
-            self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Erro ao carregar dados: {e}")
         finally:
