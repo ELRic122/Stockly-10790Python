@@ -1,19 +1,26 @@
+# Bibliotecas
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QVBoxLayout, QHBoxLayout
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
+# Importar classes de outros módulos
 from InsertClientClass import InserirCliente
+from InsertSuppliersClass import InserirFornecedores
+from InsertStockClass import InserirStock
+from InsertSalesClass import InserirVendas
 
+# Classe do menu de inserir registos
 class InserirMenu(QMainWindow):
+    # Construtor da classe
     def __init__(self, mainMenu_ref):
-        super().__init__()
-        self.mainMenu = mainMenu_ref
+        super().__init__() # Inicializa a classe pai
+        self.mainMenu = mainMenu_ref # Referência ao menu principal
 
-        self.setWindowIcon(QIcon('img/icon.png'))
-        self.setWindowTitle('Stockly - Gestão de Inventário') 
-        self.setGeometry(70, 50, 1800, 1000)
+        self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
+        self.setWindowTitle('Stockly - Gestão de Inventário') # Definir título da janela
+        self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
 
-        self.centralWidget = QWidget(self)
-        self.setCentralWidget(self.centralWidget)
+        self.centralWidget = QWidget(self) # Cria um widget central
+        self.setCentralWidget(self.centralWidget) # Define o widget central da janela
 
         # Layout principal vertical
         fullLayout = QVBoxLayout(self.centralWidget)
@@ -22,6 +29,7 @@ class InserirMenu(QMainWindow):
         topBarLayout = QHBoxLayout()
         topBarLayout.addStretch()
 
+        # Botão voltar
         self.buttonBack = QPushButton('←')
         self.buttonBack.setFixedSize(60, 60)
         self.buttonBack.setStyleSheet("""
@@ -36,6 +44,7 @@ class InserirMenu(QMainWindow):
                 color: #CCCCCC;
             }
         """)
+        # Conectar o botão voltar à função
         self.buttonBack.clicked.connect(self.voltarAoMenu)
         topBarLayout.addWidget(self.buttonBack)
 
@@ -43,9 +52,10 @@ class InserirMenu(QMainWindow):
         mainLayout = QHBoxLayout()
         mainLayout.setAlignment(Qt.AlignCenter)
 
+        # Layouts verticais para os botões
         leftLayout = QVBoxLayout()
         rightLayout = QVBoxLayout()
-        leftLayout.setAlignment(Qt.AlignVCenter)
+        leftLayout.setAlignment(Qt.AlignVCenter) 
         rightLayout.setAlignment(Qt.AlignVCenter)
 
         # Botões principais
@@ -56,10 +66,11 @@ class InserirMenu(QMainWindow):
 
         # Conectar os botões às funções
         self.button1.clicked.connect(lambda: self.gotoInserirCliente())
-        self.button2.clicked.connect(lambda: self.gotoVisualizarFornecedores())
-        self.button3.clicked.connect(lambda: self.gotoVisualizarStock())
-        self.button4.clicked.connect(lambda: self.gotoVisualizarVendas())
+        self.button2.clicked.connect(lambda: self.gotoInserirFornecedores())
+        self.button3.clicked.connect(lambda: self.gotoInserirStock())
+        self.button4.clicked.connect(lambda: self.gotoInserirVendas())
 
+        # Estilo dos botões
         buttonStyle = """
             QPushButton {
                 font-size: 26px;
@@ -75,18 +86,21 @@ class InserirMenu(QMainWindow):
                 background-color: #2F3E50;
             }
         """
+        # Aplicar estilo aos botões
         for btn in [self.button1, self.button2, self.button3, self.button4]:
             btn.setStyleSheet(buttonStyle)
 
-        # Adicionar botões aos layouts
+        # Adicionar botões ao layout da esquerda
         leftLayout.addWidget(self.button1)
         leftLayout.addSpacing(120)
         leftLayout.addWidget(self.button2)
 
+        # Adicionar botões ao layout da direita
         rightLayout.addWidget(self.button3)
         rightLayout.addSpacing(120)
         rightLayout.addWidget(self.button4)
 
+        # Adicionar os layouts ao layout principal
         mainLayout.addLayout(leftLayout)
         mainLayout.addSpacing(450)
         mainLayout.addLayout(rightLayout)
@@ -97,13 +111,35 @@ class InserirMenu(QMainWindow):
         fullLayout.addLayout(mainLayout)
         fullLayout.addStretch()
 
-        self.centralWidget.setLayout(fullLayout)
+        self.centralWidget.setLayout(fullLayout) # Define o layout do widget central
 
+    # Função para voltar ao menu principal
     def voltarAoMenu(self):
         self.mainMenu.show()
         self.close()
 
+    # Função para ir para o menu de inserir cliente
     def gotoInserirCliente(self):
         self.inserirCliente = InserirCliente(self)
         self.inserirCliente.show()
         self.hide()
+
+    # Função para ir para o menu de inserir fornecedores
+    def gotoInserirFornecedores(self):
+        self.InserirFornecedor = InserirFornecedores(self)
+        self.InserirFornecedor.show()
+        self.hide()
+
+    # Função para ir para o menu de inserir stock
+    def gotoInserirStock(self):
+        self.InserirStock = InserirStock(self)
+        self.InserirStock.show()
+        self.hide()
+
+    # Função para ir para o menu de inserir vendas
+    def gotoInserirVendas(self):
+        self.InserirVendas = InserirVendas(self)
+        self.InserirVendas.show()
+        self.hide()
+
+    

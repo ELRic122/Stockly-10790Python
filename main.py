@@ -11,6 +11,7 @@ class MainMenu(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Stockly - Gestão de Inventário') 
+        
         self.setWindowIcon(QIcon('img/icon.png'))  # Definir ícone da janela
         self.setGeometry(70, 50, 1800, 1000)
 

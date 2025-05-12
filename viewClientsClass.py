@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QMessageBox, QTableWidgetItem, QTableWidget, QHeaderView, QLineEdit, QFrame
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QMessageBox, QTableWidgetItem, QTableWidget, QHeaderView, QLineEdit, QFrame, QLabel
 from PyQt5.QtGui import QIcon, QFont, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import Qt, QSortFilterProxyModel
 import mysql.connector
+from fpdf import FPDF
 
 def conectarBD():
     conn = None
@@ -25,6 +26,10 @@ class VisualizarClientes(QMainWindow):
         self.setCentralWidget(self.centralWidget)
         layout = QVBoxLayout()
         
+        # Total de clientes
+        self.totalClientes = QLabel('Total de Clientes: 0')
+        self.totalClientes.setStyleSheet("color: #112233; font-size: 14px; font-weight: bold;")
+
         # Layout da barra de pesquisa
         barra_layout = QHBoxLayout()
         barra_layout.setAlignment(Qt.AlignCenter)
@@ -32,7 +37,6 @@ class VisualizarClientes(QMainWindow):
         frame_pesquisa = QFrame()
         frame_pesquisa.setFixedSize(420, 40)
         frame_pesquisa.setStyleSheet("background-color: transparent;")
-
 
         self.pesquisa = QLineEdit(frame_pesquisa)
         self.pesquisa.setPlaceholderText("Pesquisar...")
@@ -89,6 +93,30 @@ class VisualizarClientes(QMainWindow):
         layout.addSpacing(30) 
         layout.addLayout(barra_layout)
         layout.addSpacing(10)
+        # Layout horizontal para Total de Clientes + Botão PDF
+        linha_info_layout = QHBoxLayout()
+        linha_info_layout.addWidget(self.totalClientes)
+
+        self.buttonPDF = QPushButton("Download Lista Clientes")
+        self.buttonPDF.setFixedSize(300, 50)
+        self.buttonPDF.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                font-weight: bold;
+                background-color: #1e2c3a;
+                color: white;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #2f3e50;
+            }
+        """)
+        self.buttonPDF.clicked.connect(self.PDF)
+        linha_info_layout.addWidget(self.buttonPDF)
+        linha_info_layout.addStretch()
+
+        layout.addLayout(linha_info_layout)        
+        #layout.addWidget(self.totalClientes, alignment=Qt.AlignLeft)
 
         # Tabela configurada
         self.configurarTabela()
@@ -113,6 +141,7 @@ class VisualizarClientes(QMainWindow):
                     break
             self.tabela.setRowHidden(i, not linhaVisivel)
 
+    # Configuracao da tabela
     def configurarTabela(self):
         self.tabela = QTableWidget()
         self.tabela.setFont(QFont("Inter", 12))
@@ -144,19 +173,6 @@ class VisualizarClientes(QMainWindow):
             }
         """)
 
-        #self.tabela.horizontalHeader().setStretchLastSection(True)
-        #self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
-
-        #self.model = QStandardItemModel()
-        #self.proxy_model = QSortFilterProxyModel()
-        #self.proxy_model.setSourceModel(self.model)
-        #self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
-        #self.proxy_model.setFilterKeyColumn(-1)  # Filtra em todas as colunas
-
-        #self.tabela.setModel(self.proxy_model)
-        #self.pesquisa.textChanged.connect(self.proxy_model.setFilterWildcard)
-
         self.tabela.horizontalHeader().setStretchLastSection(True)
         self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         
@@ -171,6 +187,7 @@ class VisualizarClientes(QMainWindow):
             cursor.execute("SELECT ID_Cliente, Nome, Contacto, Data_Nascimento, Morada FROM cliente")
             resultados = cursor.fetchall()
             self.tabela.setRowCount(len(resultados))
+            self.totalClientes.setText(f'Total de Clientes: {len(resultados)}')
 
             for i, linha in enumerate(resultados):
                 for j, valor in enumerate(linha):
@@ -187,3 +204,42 @@ class VisualizarClientes(QMainWindow):
     def voltarAoMenu(self):
         self.ViewMenu.show()
         self.close()
+
+    def PDF(self):
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+        pdf.set_auto_page_break(auto=True, margin=15)
+
+        # Titulo
+        pdf.set_font("Arial", 'B', 14)
+        pdf.cell(0, 10, "Lista de Clientes", ln=True, align="C")
+        pdf.ln(10) # 10 linhas de espaco
+
+        # B - Bold (negrito)
+        # I - Italic (itálico)  
+        # u - Underline (sublinhado)
+        # C - Center (centralizado)
+        # L - Left (esquerda)
+        # R - Right (direita)
+
+        # Conectar à Base de Dados Cliente
+        conn = conectarBD()
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT ID_Cliente, Nome, Contacto, Data_Nascimento, Morada FROM cliente")
+            resultados = cursor.fetchall()
+            
+            pdf.set_font("Arial", size=11)
+            for cliente in resultados:
+                linha = f"ID: {cliente[0]} | Nome: {cliente[1]} | Contacto: {cliente[2]} | Data: {cliente[3]} | Morada: {cliente[4]}"
+                pdf.multi_cell(0, 10, linha)
+                pdf.ln(2)
+
+            cursor.close()
+            conn.close()
+        else:
+            pdf.cell(0, 10, "Erro a ligar à base de dados.", ln=True)
+
+        # Guardar
+        pdf.output("clientes.pdf")
