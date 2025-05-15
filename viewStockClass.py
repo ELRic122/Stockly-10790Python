@@ -95,7 +95,7 @@ class VisualizarStock(QMainWindow):
         linha_info_layout = QHBoxLayout()
         linha_info_layout.addWidget(self.totalStock)
 
-        self.buttonPDF = QPushButton("Download Lista Vendas")
+        self.buttonPDF = QPushButton("Download Lista Stock")
         self.buttonPDF.setFixedSize(300, 50)
         self.buttonPDF.setStyleSheet("""
             QPushButton {

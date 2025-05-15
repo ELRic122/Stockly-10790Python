@@ -3,7 +3,9 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QVBoxLayout, QHBo
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 from alterClientClass import AlterarCliente
-
+from alterSuppliersClass import AlterarFornecedor
+from alterStockClass import AlterarStock
+from alterSalesclass import AlterarVendas
 
 # class AlterarMenu
 class AlterarMenu(QMainWindow): 
@@ -63,9 +65,9 @@ class AlterarMenu(QMainWindow):
 
         # Conectar os botões às funções
         self.button1.clicked.connect(lambda: self.gotoAlterarCliente())  
-        self.button2.clicked.connect(lambda: self.mostrarMensagem("FORNECEDORES"))
-        self.button3.clicked.connect(lambda: self.mostrarMensagem("STOCK"))
-        self.button4.clicked.connect(lambda: self.mostrarMensagem("VENDAS"))
+        self.button2.clicked.connect(lambda: self.gotoAlterarFornecedor())
+        self.button3.clicked.connect(lambda: self.gotoAlterarStock())
+        self.button4.clicked.connect(lambda: self.gotoAlterarVendas())
         
         # Estilo dos botões
         buttonStyle = """
@@ -121,5 +123,17 @@ class AlterarMenu(QMainWindow):
         self.AlterarCliente.show()
         self.hide()
 
-    def mostrarMensagem(self, texto):
-        print(f"Botão '{texto}' clicado!")
+    def gotoAlterarFornecedor(self):
+        self.AlterarFornecedor = AlterarFornecedor(self)
+        self.AlterarFornecedor.show()
+        self.hide()
+
+    def gotoAlterarStock(self):
+        self.AlterarStock = AlterarStock(self)
+        self.AlterarStock.show()
+        self.hide()
+
+    def gotoAlterarVendas(self):
+        self.AlterarVenda = AlterarVendas(self)
+        self.AlterarVenda.show()
+        self.hide()

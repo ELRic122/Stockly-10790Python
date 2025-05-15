@@ -13,8 +13,8 @@ def conectarBD():
         print(f"Erro ao conectar a base da dados. [{error}]")
         return None
     
-# Classe da janela de alteração de cliente
-class AlterarCliente(QMainWindow):
+# Classe da janela de alteração de Fornecedores
+class AlterarFornecedor(QMainWindow):
     def __init__(self, alterMenuClass_ref):
         super().__init__()
         self.alterMenuClass_ref = alterMenuClass_ref# Referência ao menu de Alterar registos
@@ -51,10 +51,10 @@ class AlterarCliente(QMainWindow):
 
         # Campo de pesquisa
         pesquisaLayout = QHBoxLayout()
-        label_pesquisa = QLabel("Nome do cliente:")
+        label_pesquisa = QLabel("Nome do Fornecedor:")
         label_pesquisa.setFont(QFont("Inter", 16))
         self.input_pesquisa = QLineEdit()
-        self.input_pesquisa.setPlaceholderText("Pesquisar cliente...")
+        self.input_pesquisa.setPlaceholderText("Pesquisar Fornecedor...")
 
         # Estilo do campo de pesquisa
         self.input_pesquisa.setStyleSheet("""
@@ -86,7 +86,7 @@ class AlterarCliente(QMainWindow):
             }
         """)
         # Conectar o botão pesquisar à função de pesquisa
-        self.botao_pesquisar.clicked.connect(self.carregarCliente)
+        self.botao_pesquisar.clicked.connect(self.carregarFornecedor)
 
         # Adicionar widgets ao layout de pesquisa
         pesquisaLayout.addWidget(label_pesquisa)
@@ -118,8 +118,8 @@ class AlterarCliente(QMainWindow):
             }
         """
 
-        # Criar campos para: Nome, Contacto, Data Nascimento, Morada
-        for campo in ["Nome", "Contacto", "Data Nascimento", "Morada"]:
+        # Criar campos para: Nome, Contacto, Morada, NIF
+        for campo in ["Nome", "Contacto", "Morada", "NIF"]:
             container = QVBoxLayout()
             
             # Rótulo
@@ -164,10 +164,10 @@ class AlterarCliente(QMainWindow):
 
         # Aplica o layout à janela
         self.centralWidget.setLayout(layout)
-        self.id_cliente = None # Guarda o ID do cliente carregado para alteração
+        self.id_Fornecedor = None # Guarda o ID do Fornecedor carregado para alteração
 
-    # Função para carregar os dados de um cliente com base no nome pesquisado
-    def carregarCliente(self):
+    # Função para carregar os dados de um Fornecedor com base no nome pesquisado
+    def carregarFornecedor(self):
         nome = self.input_pesquisa.text().strip()
         if not nome:
             QMessageBox.warning(self, "Aviso", "Introduza um nome.")
@@ -175,42 +175,43 @@ class AlterarCliente(QMainWindow):
         conn = conectarBD()
         if conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT ID_Cliente, Nome, Contacto, Data_Nascimento, Morada FROM cliente WHERE Nome LIKE ? LIMIT 1", (f"%{nome}%",))
+            cursor.execute("SELECT ID_Fornecedor, Nome, Contacto, Morada, NIF FROM Fornecedores WHERE Nome LIKE ? LIMIT 1", (f"%{nome}%",))
             resultado = cursor.fetchone()
             conn.close()
 
             if resultado:
-                # Preencher os campos com os dados do cliente
-                self.id_cliente = resultado[0]
+                # Preencher os campos com os dados do Fornecedor
+                self.id_Fornecedor = resultado[0]
                 self.campos["nome"].setText(resultado[1])
                 self.campos["contacto"].setText(str(resultado[2]))
-                self.campos["data_nascimento"].setText(str(resultado[3]))
-                self.campos["morada"].setText(resultado[4])
-            else:
-                QMessageBox.information(self, "Sem resultados", "Cliente não encontrado.")
+                self.campos["morada"].setText(resultado[3])
+                self.campos["nif"].setText(resultado[4])
 
-    # Função para guardar as alterações feitas aos dados do cliente
+            else:
+                QMessageBox.information(self, "Sem resultados", "Fornecedor não encontrado.")
+
+    # Função para guardar as alterações feitas aos dados do Fornecedor
     def guardarAlteracoes(self):
-        if not self.id_cliente:
-            QMessageBox.warning(self, "Erro", "Nenhum cliente carregado.")
+        if not self.id_Fornecedor:
+            QMessageBox.warning(self, "Erro", "Nenhum Fornecedor carregado.")
             return
         conn = conectarBD()
         if conn:
             cursor = conn.cursor()
             try:
                 cursor.execute("""
-                    UPDATE cliente
-                    SET Nome = ?, Contacto = ?, Data_Nascimento = ?, Morada =?
-                    WHERE ID_Cliente = ?
+                    UPDATE Fornecedores
+                    SET Nome = ?, Contacto = ?, Morada = ?, NIF =?
+                    WHERE ID_fornecedor = ?
                 """, (
                     self.campos["nome"].text(),
                     self.campos["contacto"].text(),
-                    self.campos["data_nascimento"].text(),
                     self.campos["morada"].text(),
-                    self.id_cliente
+                    self.campos["nif"].text(),
+                    self.id_Fornecedor
                 ))
                 conn.commit()
-                QMessageBox.information(self, "Sucesso", "Cliente atualizado com sucesso.")
+                QMessageBox.information(self, "Sucesso", "Fornecedor atualizado com sucesso.")
             except Exception as e:
                 QMessageBox.critical(self, "Erro", f"Erro ao atualizar: {e}")
                 conn.rollback()

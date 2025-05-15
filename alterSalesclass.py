@@ -13,8 +13,8 @@ def conectarBD():
         print(f"Erro ao conectar a base da dados. [{error}]")
         return None
     
-# Classe da janela de alteração de cliente
-class AlterarCliente(QMainWindow):
+# Classe da janela de alteração de Vendas
+class AlterarVendas(QMainWindow):
     def __init__(self, alterMenuClass_ref):
         super().__init__()
         self.alterMenuClass_ref = alterMenuClass_ref# Referência ao menu de Alterar registos
@@ -51,10 +51,10 @@ class AlterarCliente(QMainWindow):
 
         # Campo de pesquisa
         pesquisaLayout = QHBoxLayout()
-        label_pesquisa = QLabel("Nome do cliente:")
+        label_pesquisa = QLabel("Nome do Produto:")
         label_pesquisa.setFont(QFont("Inter", 16))
         self.input_pesquisa = QLineEdit()
-        self.input_pesquisa.setPlaceholderText("Pesquisar cliente...")
+        self.input_pesquisa.setPlaceholderText("Pesquisar Venda...")
 
         # Estilo do campo de pesquisa
         self.input_pesquisa.setStyleSheet("""
@@ -86,7 +86,7 @@ class AlterarCliente(QMainWindow):
             }
         """)
         # Conectar o botão pesquisar à função de pesquisa
-        self.botao_pesquisar.clicked.connect(self.carregarCliente)
+        self.botao_pesquisar.clicked.connect(self.carregarVendas)
 
         # Adicionar widgets ao layout de pesquisa
         pesquisaLayout.addWidget(label_pesquisa)
@@ -118,12 +118,19 @@ class AlterarCliente(QMainWindow):
             }
         """
 
-        # Criar campos para: Nome, Contacto, Data Nascimento, Morada
-        for campo in ["Nome", "Contacto", "Data Nascimento", "Morada"]:
+        campos_def = {
+                "nome_do_produto": "Nome do Produto",
+                "preco_da_venda": "Preço da Venda",
+                "quantidade_da_venda": "Quantidade da Venda",
+                "id_stock" : "ID Stock",
+                "id_cliente": "ID cliente"
+}
+        # Criar campos para: Nome do Produto, Preço da Venda, Quantidade da Venda, ID Stock, ID Cliente
+        for chave, rotulo in campos_def.items():
             container = QVBoxLayout()
             
             # Rótulo
-            label = QLabel(campo + ":")
+            label = QLabel(rotulo + ":")
             label.setFont(QFont("Inter", 14))
             label.setStyleSheet("color: black; margin-bottom: 5px;")
 
@@ -132,8 +139,7 @@ class AlterarCliente(QMainWindow):
             entrada.setFixedHeight(40)
             entrada.setStyleSheet(estilo_entrada)
 
-            # Adiciona o campo ao dicionário com chave normalizada (sem espaços e lowercase)
-            self.campos[campo.lower().replace(" ", "_")] = entrada
+            self.campos[chave] = entrada
 
             # Adiciona ao layout do campo
             container.addWidget(label)
@@ -164,10 +170,10 @@ class AlterarCliente(QMainWindow):
 
         # Aplica o layout à janela
         self.centralWidget.setLayout(layout)
-        self.id_cliente = None # Guarda o ID do cliente carregado para alteração
+        self.id_Venda = None # Guarda o ID da Venda carregado para alteração
 
-    # Função para carregar os dados de um cliente com base no nome pesquisado
-    def carregarCliente(self):
+    # Função para carregar os dados de uma venda com base no nome pesquisado
+    def carregarVendas(self):
         nome = self.input_pesquisa.text().strip()
         if not nome:
             QMessageBox.warning(self, "Aviso", "Introduza um nome.")
@@ -175,42 +181,45 @@ class AlterarCliente(QMainWindow):
         conn = conectarBD()
         if conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT ID_Cliente, Nome, Contacto, Data_Nascimento, Morada FROM cliente WHERE Nome LIKE ? LIMIT 1", (f"%{nome}%",))
+            cursor.execute("SELECT ID_Venda, Nome_Produto, Preco_Venda, Quantidade_Venda, ID_Stock, ID_Cliente FROM Vendas WHERE Nome_Produto LIKE ? LIMIT 1", (f"%{nome}%",))
             resultado = cursor.fetchone()
             conn.close()
 
             if resultado:
-                # Preencher os campos com os dados do cliente
-                self.id_cliente = resultado[0]
-                self.campos["nome"].setText(resultado[1])
-                self.campos["contacto"].setText(str(resultado[2]))
-                self.campos["data_nascimento"].setText(str(resultado[3]))
-                self.campos["morada"].setText(resultado[4])
-            else:
-                QMessageBox.information(self, "Sem resultados", "Cliente não encontrado.")
+                # Preencher os campos com os dados da venda
+                self.id_Venda = resultado[0]
+                self.campos["nome_do_produto"].setText(resultado[1])
+                self.campos["preco_da_venda"].setText(str(resultado[2]))
+                self.campos["quantidade_da_venda"].setText(str(resultado[3]))
+                self.campos["id_stock"].setText(str(resultado[4]))
+                self.campos["id_cliente"].setText(str(resultado[5]))
 
-    # Função para guardar as alterações feitas aos dados do cliente
+            else:
+                QMessageBox.information(self, "Sem resultados", "Venda não encontrada.")
+
+    # Função para guardar as alterações feitas aos dados da Venda
     def guardarAlteracoes(self):
-        if not self.id_cliente:
-            QMessageBox.warning(self, "Erro", "Nenhum cliente carregado.")
+        if not self.id_Venda:
+            QMessageBox.warning(self, "Erro", "Nenhuma Venda carregada.")
             return
         conn = conectarBD()
         if conn:
             cursor = conn.cursor()
             try:
                 cursor.execute("""
-                    UPDATE cliente
-                    SET Nome = ?, Contacto = ?, Data_Nascimento = ?, Morada =?
-                    WHERE ID_Cliente = ?
+                    UPDATE Vendas
+                    SET Nome_Produto = ?, Preco_Venda = ?, Quantidade_Venda = ?, ID_Stock = ?, ID_Cliente = ?
+                    WHERE ID_Venda = ?
                 """, (
-                    self.campos["nome"].text(),
-                    self.campos["contacto"].text(),
-                    self.campos["data_nascimento"].text(),
-                    self.campos["morada"].text(),
-                    self.id_cliente
-                ))
+                    self.campos["nome_do_produto"].text(),
+                    self.campos["preco_da_venda"].text(),
+                    self.campos["quantidade_da_venda"].text(),
+                    self.campos["id_stock"].text(),
+                    self.campos["id_cliente"].text(),
+                    self.id_Venda
+                    ))
                 conn.commit()
-                QMessageBox.information(self, "Sucesso", "Cliente atualizado com sucesso.")
+                QMessageBox.information(self, "Sucesso", "Venda atualizada com sucesso.")
             except Exception as e:
                 QMessageBox.critical(self, "Erro", f"Erro ao atualizar: {e}")
                 conn.rollback()

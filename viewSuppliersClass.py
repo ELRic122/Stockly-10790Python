@@ -97,7 +97,7 @@ class VisualizarFornecedores(QMainWindow):
         linha_info_layout = QHBoxLayout()
         linha_info_layout.addWidget(self.totalFornecedores)
 
-        self.buttonPDF = QPushButton("Download Lista Vendas")
+        self.buttonPDF = QPushButton("Download Lista Fornecedores")
         self.buttonPDF.setFixedSize(300, 50)
         self.buttonPDF.setStyleSheet("""
             QPushButton {
