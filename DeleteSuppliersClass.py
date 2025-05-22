@@ -226,6 +226,18 @@ class ApagarFornecedor(QMainWindow):
             if conn:
                 cursor = conn.cursor()
                 try:
+                    cursor.execute("SELECT Nome, Contacto, Morada, NIF FROM fornecedores WHERE ID_Fornecedor = ?", (id_fornecedor,))
+                    fornecedor = cursor.fetchone()
+
+                    if fornecedor:
+                        nome, contacto, morada, nif = fornecedor
+                        descricao = f"Nome: {nome}, Contacto: {contacto}, Morada: {morada}, NIF: {nif}"
+                        cursor.execute("""
+                            INSERT INTO historico_Fornecedor (id_Fornecedor, campo_alterado, valor_antigo, valor_novo)
+                            VALUES (?, 'ELIMINAÇÃO', ?, '')
+                        """, (id_fornecedor, descricao))
+
+
                     cursor.execute("DELETE FROM fornecedores WHERE ID_Fornecedor = ?", (id_fornecedor,))
                     conn.commit()
                     self.tabela_Fornecedores.removeRow(row)

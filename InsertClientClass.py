@@ -165,7 +165,14 @@ class InserirCliente(QMainWindow):
                 cursor.execute("""
                     INSERT INTO cliente (Nome, Contacto, Data_Nascimento, Morada)
                     VALUES (?, ?, ?, ?) 
-                """, (nome, contacto, data_nascimento, morada)) # Insere os dados na tabela cliente
+                """, (nome, contacto, data_nascimento, morada))  # Insere os dados na tabela cliente
+
+                id_cliente = cursor.lastrowid  # Obtém o ID do cliente inserido
+
+                cursor.execute("""
+                    INSERT INTO historico_cliente (id_cliente, campo_alterado, valor_antigo, valor_novo)
+                    VALUES (?, 'INSERÇÃO', '', ?)
+                """, (id_cliente, f"Nome: {nome}, Contacto: {contacto}, Nascimento: {data_nascimento}, Morada: {morada}"))
 
                 conn.commit()
                 QMessageBox.information(self, "Sucesso", "Cliente inserido com sucesso!")

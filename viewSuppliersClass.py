@@ -3,6 +3,7 @@ from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
 import sqlite3
 from exportAsPDF import exportPDF_Fornecedores
+from HistorySupplier import HistoricoFornecedores
 
 # Função para conectar à base de dados
 def conectarBD():
@@ -126,6 +127,26 @@ class VisualizarFornecedores(QMainWindow):
             }
         """)
 
+        # Botão do Histórico de alterações
+        self.botaoHistoricoFornecedores = QPushButton("Histórico de Alterações")
+        self.botaoHistoricoFornecedores.setFixedSize(300, 50)
+        self.botaoHistoricoFornecedores.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                font-weight: bold;
+                background-color: #1e2c3a;
+                color: white;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #2f3e50;
+            }
+        """)
+
+        # Adiciona o layout do botão do histórico de alterações
+        self.botaoHistoricoFornecedores.clicked.connect(self.gotoHistoricoFornecedores)
+        linha_info_layout.addWidget(self.botaoHistoricoFornecedores)
+
         # Adiciona o layout do botão para exportar para pdf
         self.buttonPDF.clicked.connect(exportPDF_Fornecedores)
         linha_info_layout.addWidget(self.buttonPDF)
@@ -226,3 +247,9 @@ class VisualizarFornecedores(QMainWindow):
     def voltarAoMenu(self):
         self.ViewMenu.show()
         self.close()
+
+    # Função para ir para o histórico de alterações
+    def gotoHistoricoFornecedores(self):
+        self.HistoricoFornecedores = HistoricoFornecedores(self)
+        self.HistoricoFornecedores.show()
+        self.hide()

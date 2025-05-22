@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt, QSortFilterProxyModel
 import sqlite3
 from fpdf import FPDF
 from exportAsPDF import exportPDF_Clientes
+from historyClients import HistoricoClientes
 
 # Função para conectar à base de dados
 def conectarBD():
@@ -126,6 +127,25 @@ class VisualizarClientes(QMainWindow):
                 background-color: #2f3e50;
             }
         """)
+        # Botão do Histórico de alterações
+        self.botaoHistoricoClientes = QPushButton("Histórico de Alterações")
+        self.botaoHistoricoClientes.setFixedSize(300, 50)
+        self.botaoHistoricoClientes.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                font-weight: bold;
+                background-color: #1e2c3a;
+                color: white;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #2f3e50;
+            }
+        """)
+
+        # Adiciona o layout do botão do histórico de alterações
+        self.botaoHistoricoClientes.clicked.connect(self.gotoHistoricoClientes)
+        linha_info_layout.addWidget(self.botaoHistoricoClientes)
 
         # Adiciona o layout do botão para exportar para pdf
         self.buttonPDF.clicked.connect(exportPDF_Clientes)
@@ -226,3 +246,9 @@ class VisualizarClientes(QMainWindow):
     def voltarAoMenu(self):
         self.ViewMenu.show()
         self.close()
+
+    # Função para ir para o histórico de alterações
+    def gotoHistoricoClientes(self):
+        self.HistoricoClientes = HistoricoClientes(self)
+        self.HistoricoClientes.show()
+        self.hide()

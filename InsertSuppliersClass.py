@@ -148,6 +148,14 @@ class InserirFornecedores(QMainWindow):
                     INSERT INTO fornecedores (Nome, Contacto, Morada, NIF)
                     VALUES (?, ?, ?, ?)
                 """, (nome, contacto, morada, NIF)) # Inserir os dados na tabela fornecedores
+
+                id_Fornecedor = cursor.lastrowid  # Obtém o ID do Fornecedor inserido
+
+                cursor.execute("""
+                    INSERT INTO historico_Fornecedor (id_Fornecedor, campo_alterado, valor_antigo, valor_novo)
+                    VALUES (?, 'INSERÇÃO', '', ?)
+                """, (id_Fornecedor, f"Nome: {nome}, Contacto: {contacto}, Nascimento: {morada}, Morada: {NIF}"))
+
                 conn.commit()
                 QMessageBox.information(self, "Sucesso", "Fornecedor inserido com sucesso!")
                 # Limpar os campos de input após a inserção
