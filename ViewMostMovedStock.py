@@ -3,6 +3,7 @@ from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt
 import sqlite3
 
+# Função para conectar á base de dados
 def conectarBD():
     conn = None
     try:
@@ -12,25 +13,28 @@ def conectarBD():
         print(f"Erro ao conectar a base da dados. [{error}]")
         return None
     
+# Classe para visualizar stock mais movimentado    
 class ProdutosMaisMovimentados(QMainWindow):
-    def __init__(self, ViewStock_ref):
-        super().__init__()
-        self.ViewStock = ViewStock_ref
-        self.setWindowTitle('Stockly - Produtos mais movimentados')
-        self.setGeometry(70, 50, 1800, 1000)
-        self.setWindowIcon(QIcon('img/icon.png'))
+    def __init__(self, ViewStock_ref):# Construtor da classe
+        super().__init__() # Inicializa a classe pai
+        self.ViewStock = ViewStock_ref # Referência ao menu de visualizar registos
+        self.setWindowTitle('Stockly - Produtos mais movimentados') # Definir título da janela
+        self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
+        self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
-        self.centralWidget = QWidget()
-        self.setCentralWidget(self.centralWidget)
-        layout = QVBoxLayout()
+        self.centralWidget = QWidget() # Cria um widget central
+        self.setCentralWidget(self.centralWidget) # Define o widget central da janela
+        layout = QVBoxLayout() # Layout principal vertical
         self.centralWidget.setStyleSheet("background-color: #C2C2C2;")  # Cor de fundo
 
         # Layout do botão voltar no canto superior direito
         topBarLayout = QHBoxLayout()
         topBarLayout.addStretch()
 
+        # Botão voltar
         self.buttonBack = QPushButton("←")
         self.buttonBack.setFixedSize(60, 60)
+        # Estilo do botão voltar
         self.buttonBack.setStyleSheet("""
             QPushButton {
                 font-size: 30px;
@@ -43,10 +47,11 @@ class ProdutosMaisMovimentados(QMainWindow):
                 color: #CCCCCC;
             }
         """)
+        # Conectar o botão voltar à função
         self.buttonBack.clicked.connect(self.voltarAoMenu)
         topBarLayout.addWidget(self.buttonBack)
 
-        layout.addLayout(topBarLayout)
+        layout.addLayout(topBarLayout) # Adiciona o layout do botão voltar
 
 
         # Tabela configurada
@@ -59,12 +64,13 @@ class ProdutosMaisMovimentados(QMainWindow):
         self.carregarDados()
 
 
+    # Função para configurar a tabela
     def configurarTabela(self):
         self.tabela = QTableWidget()
         self.tabela.setFont(QFont("Inter", 12))
-        self.tabela.setEditTriggers(QTableWidget.NoEditTriggers)
-        self.tabela.verticalHeader().setVisible(False)
-        self.tabela.verticalHeader().setDefaultSectionSize(50)
+        self.tabela.setEditTriggers(QTableWidget.NoEditTriggers) # Não permite edição
+        self.tabela.verticalHeader().setVisible(False) # Oculta o cabeçalho vertical
+        self.tabela.verticalHeader().setDefaultSectionSize(50) # Define a altura padrão das linhas
 
         self.tabela.setStyleSheet("""
             QTableWidget {
@@ -90,12 +96,14 @@ class ProdutosMaisMovimentados(QMainWindow):
             }
         """)
 
+        # Configuração do cabeçalho
         self.tabela.horizontalHeader().setStretchLastSection(True)
         self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
+    # Função para carregar dados na tabela
     def carregarDados(self):
-        conn = conectarBD()
-        if conn is None:
+        conn = conectarBD() # Conectar à base de dados
+        if conn is None: # Verifica se a conexão foi bem-sucedida
             QMessageBox.critical(self, "Erro", "Não foi possível ligar à base de dados.")
             return
 
@@ -122,6 +130,7 @@ class ProdutosMaisMovimentados(QMainWindow):
             resultados = cursor.fetchall()
             self.tabela.setRowCount(len(resultados))
 
+            # Preenche a tabela com os dados 
             for i, linha in enumerate(resultados):
                 for j, valor in enumerate(linha):
                     item = QTableWidgetItem(str(valor))
@@ -130,12 +139,14 @@ class ProdutosMaisMovimentados(QMainWindow):
 
             self.tabela.resizeRowsToContents()
 
+         # Verifica se a tabela está vazia
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Erro ao carregar dados: {e}")
         finally:
             cursor.close()
             conn.close()
 
+    # Função para voltar ao menu
     def voltarAoMenu(self):
         self.ViewStock.show()
         self.close()
