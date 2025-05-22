@@ -5,15 +5,17 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt
-import mysql.connector
 from datetime import datetime
+import sqlite3
 
 # Função para conectar à base de dados
 def conectarBD():
+    conn = None
     try:
-        return mysql.connector.connect(user='root', host='localhost', database='stockly', autocommit=True)
-    except mysql.connector.Error as error:
-        print(f"Erro ao conectar à base de dados. [{error}]")
+        conn = sqlite3.connect('stockly.db')
+        return conn
+    except sqlite3.Error as error:
+        print(f"Erro ao conectar a base da dados. [{error}]")
         return None
 
 # Classe para inserir clientes
@@ -22,13 +24,14 @@ class InserirCliente(QMainWindow):
         super().__init__() # Inicializa a classe pai
         self.inserirMenu = inserirMenu_ref # Referência ao menu de inserir registos
 
-        self.setWindowTitle("Stockly - Gestão de Inventário") # Definir título da janela
+        self.setWindowTitle("Stockly - Inserir Clientes") # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
         self.centralWidget = QWidget() # Cria um widget central
         self.setCentralWidget(self.centralWidget) # Define o widget central da janela
         layout = QVBoxLayout() # Layout principal vertical
+        self.centralWidget.setStyleSheet("background-color: #C2C2C2;")  # Cor de fundo
 
         # Layout do botão voltar no canto superior direito
         topBarLayout = QHBoxLayout()
@@ -59,9 +62,10 @@ class InserirCliente(QMainWindow):
         self.input_nome = self.criarCampo(layout, "NOME:", "Inserir nome") # Campo para inserir o nome
         self.input_contacto = self.criarCampo(layout, "CONTACTO:", "Inserir contacto") # Campo para inserir o contacto
         self.input_contacto.textChanged.connect(self.verificarPrefixoContacto) # Conectar a função de verificação ao campo de contacto
-        self.input_data = self.criarCampo(layout, "DATA NASCIMENTO:", "AAAA/MM/DD") # Campo para inserir a data de nascimento
+        self.input_data = self.criarCampo(layout, "DATA NASCIMENTO:", "AAAA-MM-DD") # Campo para inserir a data de nascimento
         self.input_morada = self.criarCampo(layout, "MORADA:", "Inserir morada") # Campo para inserir a morada
 
+        
         # Botão Inserir
         self.botao_inserir = QPushButton("INSERIR")
         self.botao_inserir.setFixedSize(300, 100)
@@ -103,13 +107,18 @@ class InserirCliente(QMainWindow):
         # Estilo do campo de input
         input_field.setStyleSheet("""
             QLineEdit {
-                background-color: white;
+                border: 2px solid silver;
                 border-radius: 10px;
                 padding: 10px;
+                background-color: white;
+                color: black;
                 font-size: 16px;
             }
+            QLineEdit:focus {
+                border: 2px solid #1E2A38;
+            }
         """)
-
+        
         # Adiciona o label e o campo de input ao layout
         linha_layout.addWidget(label)
         linha_layout.addWidget(input_field)
@@ -155,7 +164,7 @@ class InserirCliente(QMainWindow):
             try:
                 cursor.execute("""
                     INSERT INTO cliente (Nome, Contacto, Data_Nascimento, Morada)
-                    VALUES (%s, %s, %s, %s) 
+                    VALUES (?, ?, ?, ?) 
                 """, (nome, contacto, data_nascimento, morada)) # Insere os dados na tabela cliente
 
                 conn.commit()

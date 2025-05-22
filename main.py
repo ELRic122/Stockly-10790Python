@@ -20,6 +20,7 @@ class MainMenu(QMainWindow):
 
         self.centralWidget = QWidget(self) # Cria um widget central
         self.setCentralWidget(self.centralWidget) # Define o widget central da janela
+        self.centralWidget.setStyleSheet("background-color: #C2C2C2;")  # Cor de fundo
 
         # Layout principal horizontal
         mainLayout = QHBoxLayout(self.centralWidget)
@@ -114,5 +115,3 @@ if __name__ == '__main__':
     mainWin = MainMenu()
     mainWin.show()
     sys.exit(app.exec_())
-
-    

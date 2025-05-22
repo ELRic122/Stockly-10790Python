@@ -5,14 +5,16 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt
-import mysql.connector
+import sqlite3
 
 # Função para conectar à base de dados
 def conectarBD():
+    conn = None
     try:
-        return mysql.connector.connect(user='root', host='localhost', database='stockly', autocommit=True)
-    except mysql.connector.Error as error:
-        print(f"Erro ao conectar à base de dados. [{error}]")
+        conn = sqlite3.connect('stockly.db')
+        return conn
+    except sqlite3.Error as error:
+        print(f"Erro ao conectar a base da dados. [{error}]")
         return None
 
 # Classe para inserir vendas
@@ -21,13 +23,14 @@ class InserirVendas(QMainWindow):
         super().__init__() # Inicializa a classe pai
         self.inserirMenu = inserirMenu_ref # Referência ao menu de inserir registos
 
-        self.setWindowTitle("Stockly - Gestão de Inventário") # Definir título da janela
+        self.setWindowTitle("Stockly - Inserir Vendas") # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
         self.centralWidget = QWidget() # Cria um widget central
         self.setCentralWidget(self.centralWidget) # Define o widget central da janela
         layout = QVBoxLayout() # Layout principal vertical
+        self.centralWidget.setStyleSheet("background-color: #C2C2C2;")  # Cor de fundo
 
         # Layout do botão voltar no canto superior direito
         topBarLayout = QHBoxLayout()
@@ -122,7 +125,7 @@ class InserirVendas(QMainWindow):
         Nome_Produto = self.input_nome.text().strip().title()
         Preco_Venda = self.input_preco.text().strip()
         Quantidade_Venda = self.input_quantidade.text().strip()
-        ID_Stock = self.input_IDfornecedor.text().strip()
+        ID_Stock = self.input_IDstock.text().strip()
         ID_Cliente = self.input_IDcliente.text().strip()
 
         # Verificar se os campos estão preenchidos
@@ -137,7 +140,7 @@ class InserirVendas(QMainWindow):
             try:
                 cursor.execute("""
                     INSERT INTO vendas (Nome_Produto, Preco_Venda, Quantidade_Venda, ID_STOCK, ID_CLIENTE)
-                    VALUES (%s, %s, %s, %s, %s)
+                    VALUES (?, ?, ?, ?, ?)
                 """, (Nome_Produto, Preco_Venda, Quantidade_Venda, ID_Stock, ID_Cliente)) # Inserir os dados na tabela vendas
                 conn.commit()
                 QMessageBox.information(self, "Sucesso", "Produto inserido com sucesso!")

@@ -5,14 +5,16 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt
-import mysql.connector
+import sqlite3
 
 # Função para conectar à base de dados
 def conectarBD():
+    conn = None
     try:
-        return mysql.connector.connect(user='root', host='localhost', database='stockly', autocommit=True)
-    except mysql.connector.Error as error:
-        print(f"Erro ao conectar à base de dados. [{error}]")
+        conn = sqlite3.connect('stockly.db')
+        return conn
+    except sqlite3.Error as error:
+        print(f"Erro ao conectar a base da dados. [{error}]")
         return None
 
 # Classe para apagar Vendas
@@ -21,13 +23,14 @@ class ApagarVendas(QMainWindow):
         super().__init__() # Inicializa a classe pai
         self.apagarmenu = apagarmenu_ref # Referência ao menu de apagar registos
 
-        self.setWindowTitle("Stockly - Gestão de Inventário") # Definir título da janela
+        self.setWindowTitle("Stockly - Apagar Vendas") # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
         self.centralWidget = QWidget() # Cria um widget central
         self.setCentralWidget(self.centralWidget) # Define o widget central da janela
         layout = QVBoxLayout() # Layout principal vertical
+        self.centralWidget.setStyleSheet("background-color: #C2C2C2;")  # Cor de fundo
 
         # Botão voltar no topo direito
         topBarLayout = QHBoxLayout()
@@ -182,7 +185,7 @@ class ApagarVendas(QMainWindow):
                 cursor.execute("""
                     SELECT ID_Venda, Nome_Produto, Preco_Venda, Quantidade_Venda, ID_Stock, ID_Cliente
                     FROM Vendas
-                    WHERE Nome_Produto LIKE %s
+                    WHERE Nome_Produto LIKE ?
                 """, (f"%{nome}%",)) # Pesquisa por nome parcial
                 resultados = cursor.fetchall()
 
@@ -223,7 +226,7 @@ class ApagarVendas(QMainWindow):
             if conn:
                 cursor = conn.cursor()
                 try:
-                    cursor.execute("DELETE FROM vendas WHERE ID_Venda = %s", (id_Vendas,))
+                    cursor.execute("DELETE FROM vendas WHERE ID_Venda = ?", (id_Vendas,))
                     conn.commit()
                     self.tabela_Vendas.removeRow(row)
                     QMessageBox.information(self, "Sucesso", "Produto apagado com sucesso.")

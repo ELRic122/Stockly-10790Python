@@ -1,16 +1,16 @@
-# Bibliotecas 
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QMessageBox, QTableWidgetItem, QTableWidget, QHeaderView, QLineEdit, QFrame
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QMessageBox, QTableWidgetItem, QTableWidget, QHeaderView, QLineEdit, QFrame, QLabel
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
-import mysql.connector
+import sqlite3
+from exportAsPDF import exportPDF_Fornecedores
 
 # Função para conectar à base de dados
 def conectarBD():
     conn = None
     try:
-        conn = mysql.connector.connect(user='root', host='localhost', database='stockly', autocommit=True)
+        conn = sqlite3.connect('stockly.db')
         return conn
-    except mysql.connector.Error as error:
+    except sqlite3.Error as error:
         print(f"Erro ao conectar a base da dados. [{error}]")
         return None
     
@@ -20,14 +20,20 @@ class VisualizarFornecedores(QMainWindow):
         super().__init__() # Inicializa a classe pai
         self.ViewMenu = ViewMenu_ref # Referência ao menu de visualizar registos
 
-        self.setWindowTitle('Stockly - Gestão de Inventário') # Definir título da janela
+        self.setWindowTitle('Stockly - Vizualizar Fornecedores') # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
         self.centralWidget = QWidget() # Cria um widget central
         self.setCentralWidget(self.centralWidget) # Define o widget central da janela
         layout = QVBoxLayout() # Layout principal vertical
+        self.centralWidget.setStyleSheet("background-color: #C2C2C2;")  # Cor de fundo
+
         
+        # Total de Fornecedores
+        self.totalFornecedores = QLabel('Total de Fornecedores: 0')
+        self.totalFornecedores.setStyleSheet("color: #112233; font-size: 14px; font-weight: bold;")
+
         # Layout da barra de pesquisa
         barra_layout = QHBoxLayout()
         barra_layout.setAlignment(Qt.AlignCenter)
@@ -57,7 +63,6 @@ class VisualizarFornecedores(QMainWindow):
         # Botão de pesquisa
         lupa = QPushButton(frame_pesquisa)
         lupa.setIcon(QIcon("img/lupa.png"))
-        lupa.setCursor(Qt.PointingHandCursor)
         lupa.setGeometry(380, 5, 30, 30)
         # Estilo do botão de pesquisa
         lupa.setStyleSheet("""
@@ -101,6 +106,33 @@ class VisualizarFornecedores(QMainWindow):
         layout.addLayout(barra_layout)
         layout.addSpacing(10)
 
+        # Layout horizontal para Total de Fornecedores + Botão PDF
+        linha_info_layout = QHBoxLayout()
+        linha_info_layout.addWidget(self.totalFornecedores)
+
+        # Botão de exportar para pdf
+        self.buttonPDF = QPushButton("Download Lista Fornecedores")
+        self.buttonPDF.setFixedSize(300, 50)
+        self.buttonPDF.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                font-weight: bold;
+                background-color: #1e2c3a;
+                color: white;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #2f3e50;
+            }
+        """)
+
+        # Adiciona o layout do botão para exportar para pdf
+        self.buttonPDF.clicked.connect(exportPDF_Fornecedores)
+        linha_info_layout.addWidget(self.buttonPDF)
+        linha_info_layout.addStretch()
+
+        layout.addLayout(linha_info_layout)     
+
         # Tabela configurada
         self.configurarTabela()
         self.tabela.setColumnCount(5) # Definir número de colunas
@@ -110,6 +142,20 @@ class VisualizarFornecedores(QMainWindow):
         # Adiciona a tabela ao layout
         self.centralWidget.setLayout(layout)  
         self.carregarDados()
+
+        self.pesquisa.textChanged.connect(self.filtrarTabela) # Pesquisa
+
+    # Funcao de filtrar a tabela para pesquisa
+    def filtrarTabela(self, texto):
+        texto = texto.lower()
+        for i in range(self.tabela.rowCount()):
+            linhaVisivel = False
+            for j in range(self.tabela.columnCount()):
+                item = self.tabela.item(i, j)
+                if item and texto in item.text().lower():
+                    linhaVisivel = True
+                    break
+            self.tabela.setRowHidden(i, not linhaVisivel)
 
     # Funcão para criar a tabela
     def configurarTabela(self):
@@ -148,7 +194,8 @@ class VisualizarFornecedores(QMainWindow):
         self.tabela.horizontalHeader().setStretchLastSection(True)
         self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-    # Função para carregar os dados na tabela
+
+        # Função para carregar os dados na tabela
     def carregarDados(self):
         conn = conectarBD() # Conectar à base de dados
         if conn is None:

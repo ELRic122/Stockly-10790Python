@@ -5,14 +5,16 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt
-import mysql.connector
+import sqlite3
 
 # Função para conectar à base de dados
 def conectarBD():
+    conn = None
     try:
-        return mysql.connector.connect(user='root', host='localhost', database='stockly', autocommit=True)
-    except mysql.connector.Error as error:
-        print(f"Erro ao conectar à base de dados. [{error}]")
+        conn = sqlite3.connect('stockly.db')
+        return conn
+    except sqlite3.Error as error:
+        print(f"Erro ao conectar a base da dados. [{error}]")
         return None
 
 # Classe para inserir produtos no stock
@@ -21,13 +23,14 @@ class InserirFornecedores(QMainWindow):
         super().__init__() # Inicializa a classe pai
         self.inserirMenu = inserirMenu_ref # Referência ao menu de inserir registos
 
-        self.setWindowTitle("Stockly - Gestão de Inventário") # Definir título da janela
+        self.setWindowTitle("Stockly - Inserir Fornecedor") # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
         self.centralWidget = QWidget() # Cria um widget central
         self.setCentralWidget(self.centralWidget) # Define o widget central da janela
         layout = QVBoxLayout() # Layout principal vertical
+        self.centralWidget.setStyleSheet("background-color: #C2C2C2;")  # Cor de fundo
 
         # Layout do botão voltar no canto superior direito
         topBarLayout = QHBoxLayout()
@@ -143,7 +146,7 @@ class InserirFornecedores(QMainWindow):
             try:
                 cursor.execute("""
                     INSERT INTO fornecedores (Nome, Contacto, Morada, NIF)
-                    VALUES (%s, %s, %s, %s)
+                    VALUES (?, ?, ?, ?)
                 """, (nome, contacto, morada, NIF)) # Inserir os dados na tabela fornecedores
                 conn.commit()
                 QMessageBox.information(self, "Sucesso", "Fornecedor inserido com sucesso!")

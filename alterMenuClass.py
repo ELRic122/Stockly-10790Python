@@ -2,6 +2,10 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QVBoxLayout, QHBoxLayout
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
+from alterClientClass import AlterarCliente
+from alterSuppliersClass import AlterarFornecedor
+from alterStockClass import AlterarStock
+from alterSalesclass import AlterarVendas
 
 # class AlterarMenu
 class AlterarMenu(QMainWindow): 
@@ -10,11 +14,12 @@ class AlterarMenu(QMainWindow):
         self.mainMenu = mainMenu_ref # Referência ao menu principal
 
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
-        self.setWindowTitle('Stockly - Gestão de Inventário') # Definir título da janela
+        self.setWindowTitle('Stockly - Menu de Alterar Registos') # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
 
         self.centralWidget = QWidget(self) # Cria um widget central
         self.setCentralWidget(self.centralWidget) # Define o widget central da janela
+        self.centralWidget.setStyleSheet("background-color: #C2C2C2;")  # Cor de fundo
 
         # Layout principal vertical
         fullLayout = QVBoxLayout(self.centralWidget)
@@ -59,10 +64,10 @@ class AlterarMenu(QMainWindow):
         self.button4 = QPushButton('VENDAS')
 
         # Conectar os botões às funções
-        self.button1.clicked.connect(lambda: self.mostrarMensagem("CLIENTES"))  
-        self.button2.clicked.connect(lambda: self.mostrarMensagem("FORNECEDORES"))
-        self.button3.clicked.connect(lambda: self.mostrarMensagem("STOCK"))
-        self.button4.clicked.connect(lambda: self.mostrarMensagem("VENDAS"))
+        self.button1.clicked.connect(lambda: self.gotoAlterarCliente())  
+        self.button2.clicked.connect(lambda: self.gotoAlterarFornecedor())
+        self.button3.clicked.connect(lambda: self.gotoAlterarStock())
+        self.button4.clicked.connect(lambda: self.gotoAlterarVendas())
         
         # Estilo dos botões
         buttonStyle = """
@@ -113,5 +118,22 @@ class AlterarMenu(QMainWindow):
         self.mainMenu.show()
         self.close()
 
-    def mostrarMensagem(self, texto):
-        print(f"Botão '{texto}' clicado!")
+    def gotoAlterarCliente(self):
+        self.AlterarCliente = AlterarCliente(self)
+        self.AlterarCliente.show()
+        self.hide()
+
+    def gotoAlterarFornecedor(self):
+        self.AlterarFornecedor = AlterarFornecedor(self)
+        self.AlterarFornecedor.show()
+        self.hide()
+
+    def gotoAlterarStock(self):
+        self.AlterarStock = AlterarStock(self)
+        self.AlterarStock.show()
+        self.hide()
+
+    def gotoAlterarVendas(self):
+        self.AlterarVenda = AlterarVendas(self)
+        self.AlterarVenda.show()
+        self.hide()

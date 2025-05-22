@@ -1,25 +1,23 @@
-# Bibliotecas
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QVBoxLayout, QHBoxLayout
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
-# Importar classes de visualização
 from viewClientsClass import VisualizarClientes
 from viewSuppliersClass import VisualizarFornecedores
 from viewStockClass import VisualizarStock
 from viewSalesClass import Visualizarvendas
 
-# Classe do menu de visualização
-class VisualizarMenu(QMainWindow): 
-    def __init__(self, mainMenu_ref): # Construtor da classe
-        super().__init__() # Inicializa a classe pai
-        self.mainMenu = mainMenu_ref # Referência ao menu principal
+class VisualizarMenu(QMainWindow):
+    def __init__(self, mainMenu_ref):
+        super().__init__()
+        self.mainMenu = mainMenu_ref
 
-        self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
-        self.setWindowTitle('Stockly - Gestão de Inventário') # Definir título da janela
-        self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
+        self.setWindowIcon(QIcon('img/icon.png'))
+        self.setWindowTitle('Stockly - Menu de Vizualizar Registos') 
+        self.setGeometry(70, 50, 1800, 1000)
 
-        self.centralWidget = QWidget(self) # Cria um widget central
-        self.setCentralWidget(self.centralWidget) # Define o widget central da janela
+        self.centralWidget = QWidget(self)
+        self.setCentralWidget(self.centralWidget)
+        self.centralWidget.setStyleSheet("background-color: #C2C2C2;")  # Cor de fundo
 
         # Layout principal vertical
         fullLayout = QVBoxLayout(self.centralWidget)
@@ -28,7 +26,6 @@ class VisualizarMenu(QMainWindow):
         topBarLayout = QHBoxLayout()
         topBarLayout.addStretch()
 
-        # Botão voltar
         self.buttonBack = QPushButton('←')
         self.buttonBack.setFixedSize(60, 60)
         self.buttonBack.setStyleSheet("""
@@ -43,7 +40,6 @@ class VisualizarMenu(QMainWindow):
                 color: #CCCCCC;
             }
         """)
-        # Conectar o botão voltar à função
         self.buttonBack.clicked.connect(self.voltarAoMenu)
         topBarLayout.addWidget(self.buttonBack)
 
@@ -51,7 +47,6 @@ class VisualizarMenu(QMainWindow):
         mainLayout = QHBoxLayout()
         mainLayout.setAlignment(Qt.AlignCenter)
 
-        # Layouts para os botões
         leftLayout = QVBoxLayout()
         rightLayout = QVBoxLayout()
         leftLayout.setAlignment(Qt.AlignVCenter)
@@ -68,7 +63,6 @@ class VisualizarMenu(QMainWindow):
         self.button2.clicked.connect(lambda: self.gotoVisualizarFornecedores())
         self.button3.clicked.connect(lambda: self.gotoVisualizarStock())
         self.button4.clicked.connect(lambda: self.gotoVisualizarVendas())
-        # Estilo dos botões
         buttonStyle = """
             QPushButton {
                 font-size: 26px;
@@ -84,7 +78,6 @@ class VisualizarMenu(QMainWindow):
                 background-color: #2F3E50;
             }
         """
-        # Aplicar estilo aos botões
         for btn in [self.button1, self.button2, self.button3, self.button4]:
             btn.setStyleSheet(buttonStyle)
 
@@ -93,12 +86,10 @@ class VisualizarMenu(QMainWindow):
         leftLayout.addSpacing(120)
         leftLayout.addWidget(self.button2)
 
-        # Adicionar botões aos layouts
         rightLayout.addWidget(self.button3)
         rightLayout.addSpacing(120)
         rightLayout.addWidget(self.button4)
 
-        # Adicionar botões aos layouts
         mainLayout.addLayout(leftLayout)
         mainLayout.addSpacing(450)
         mainLayout.addLayout(rightLayout)
@@ -109,14 +100,12 @@ class VisualizarMenu(QMainWindow):
         fullLayout.addLayout(mainLayout)
         fullLayout.addStretch()
 
-        self.centralWidget.setLayout(fullLayout) # Define o layout do widget central
+        self.centralWidget.setLayout(fullLayout)
 
-    # Função para voltar ao menu principal
     def voltarAoMenu(self):
         self.mainMenu.show()
         self.close()
 
-    # Funções para ir para os menus de visualização
     def gotoVisualizarClientes(self):
         self.VizualizarClientes = VisualizarClientes(self)
         self.VizualizarClientes.show()

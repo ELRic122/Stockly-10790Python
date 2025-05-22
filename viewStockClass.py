@@ -1,16 +1,17 @@
-# Bibliotecas
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QMessageBox, QTableWidgetItem, QTableWidget, QHeaderView, QLineEdit, QFrame
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QMessageBox, QTableWidgetItem, QTableWidget, QHeaderView, QLineEdit, QFrame, QLabel
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
-import mysql.connector
+import sqlite3
+from exportAsPDF import exportPDF_Stock
+from ViewMostMovedStock import ProdutosMaisMovimentados
 
-# Função para conectar à base de dados
+# Função para conectar á base de dados
 def conectarBD():
     conn = None
     try:
-        conn = mysql.connector.connect(user='root', host='localhost', database='stockly', autocommit=True)
+        conn = sqlite3.connect('stockly.db')
         return conn
-    except mysql.connector.Error as error:
+    except sqlite3.Error as error:
         print(f"Erro ao conectar a base da dados. [{error}]")
         return None
     
@@ -26,7 +27,13 @@ class VisualizarStock(QMainWindow):
         self.centralWidget = QWidget() # Cria um widget central
         self.setCentralWidget(self.centralWidget) # Define o widget central da janela
         layout = QVBoxLayout() # Layout principal vertical
+        self.centralWidget.setStyleSheet("background-color: #C2C2C2;")  # Cor de fundo
+
         
+        # Total de Stock
+        self.totalStock = QLabel('Total de Stock: 0')
+        self.totalStock.setStyleSheet("color: #112233; font-size: 14px; font-weight: bold;")
+
         # Layout da barra de pesquisa
         barra_layout = QHBoxLayout()
         barra_layout.setAlignment(Qt.AlignCenter)
@@ -40,6 +47,7 @@ class VisualizarStock(QMainWindow):
         self.pesquisa = QLineEdit(frame_pesquisa)
         self.pesquisa.setPlaceholderText("Pesquisar...")
         self.pesquisa.setGeometry(0, 0, 420, 40)
+
         # Estilo do campo de pesquisa
         self.pesquisa.setStyleSheet("""
             QLineEdit {
@@ -56,7 +64,6 @@ class VisualizarStock(QMainWindow):
         # Botão de pesquisa
         lupa = QPushButton(frame_pesquisa)
         lupa.setIcon(QIcon("img/lupa.png"))
-        lupa.setCursor(Qt.PointingHandCursor)
         lupa.setGeometry(380, 5, 30, 30)
         # Estilo do botão de pesquisa
         lupa.setStyleSheet("""
@@ -99,6 +106,53 @@ class VisualizarStock(QMainWindow):
         layout.addLayout(barra_layout)
         layout.addSpacing(10)
 
+        # Layout horizontal para Total de Stock + Botão PDF
+        linha_info_layout = QHBoxLayout()
+        linha_info_layout.addWidget(self.totalStock)
+
+        # Botão de exportar pdf
+        self.buttonPDF = QPushButton("Download Lista Stock")
+        self.buttonPDF.setFixedSize(300, 50)
+        self.buttonPDF.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                font-weight: bold;
+                background-color: #1e2c3a;
+                color: white;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #2f3e50;
+            }
+        """)
+
+        # Botão dos produtos mais movimentados
+        self.buttonMaisMovimentados = QPushButton("Produtos mais Movimentados")
+        self.buttonMaisMovimentados.setFixedSize(300, 50)
+        self.buttonMaisMovimentados.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                font-weight: bold;
+                background-color: #1e2c3a;
+                color: white;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #2f3e50;
+            }
+        """)
+
+        # Adiciona o layout do botão dos produtos mais moveimentados
+        self.buttonMaisMovimentados.clicked.connect(self.abrirMaisMovimentados)
+        linha_info_layout.addWidget(self.buttonMaisMovimentados)
+
+        # Adiciona o layout do botão para exportar para pdf
+        self.buttonPDF.clicked.connect(exportPDF_Stock)
+        linha_info_layout.addWidget(self.buttonPDF)
+        linha_info_layout.addStretch()
+
+        layout.addLayout(linha_info_layout)     
+
         # Tabela configurada
         self.configurarTabela()
         self.tabela.setColumnCount(5) # Definir número de colunas da tabela
@@ -109,6 +163,20 @@ class VisualizarStock(QMainWindow):
         self.centralWidget.setLayout(layout)  
         self.carregarDados()
 
+        self.pesquisa.textChanged.connect(self.filtrarTabela) # Pesquisa
+
+    # Funcao de filtrar a tabela para pesquisa
+    def filtrarTabela(self, texto):
+        texto = texto.lower()
+        for i in range(self.tabela.rowCount()):
+            linhaVisivel = False
+            for j in range(self.tabela.columnCount()):
+                item = self.tabela.item(i, j)
+                if item and texto in item.text().lower():
+                    linhaVisivel = True
+                    break
+            self.tabela.setRowHidden(i, not linhaVisivel)
+
     # Função para configurar a tabela
     def configurarTabela(self):
         self.tabela = QTableWidget()
@@ -117,7 +185,6 @@ class VisualizarStock(QMainWindow):
         self.tabela.verticalHeader().setVisible(False) # Oculta o cabeçalho vertical
         self.tabela.verticalHeader().setDefaultSectionSize(50) # Define a altura padrão das linhas
 
-        # Estilo da tabela
         self.tabela.setStyleSheet("""
             QTableWidget {
                 background-color: #2b2b2b;
@@ -177,3 +244,9 @@ class VisualizarStock(QMainWindow):
     def voltarAoMenu(self):
         self.ViewMenu.show()
         self.close()
+
+    #Função para ir para os produtos mais movimentados
+    def abrirMaisMovimentados(self):
+        self.janelaMovimentados = ProdutosMaisMovimentados(self)
+        self.janelaMovimentados.show()
+        self.hide()
