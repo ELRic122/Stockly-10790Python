@@ -15,9 +15,9 @@ def conectarBD():
 
 # Classe do histórico de Stock
 class HistoricoStock(QMainWindow): 
-    def __init__(self, viewsuppliersClass_ref): # Construtor da classe
+    def __init__(self, viewstockClass_ref): # Construtor da classe
         super().__init__() # Inicializa a classe pai
-        self.ViewSuppliers = viewsuppliersClass_ref # Referência ao menu de visualizar registos
+        self.ViewStock = viewstockClass_ref # Referência ao menu de visualizar registos
         self.setWindowTitle('Stockly - Histórico de Alterações dos Produtos')
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
@@ -134,5 +134,5 @@ class HistoricoStock(QMainWindow):
 
     # Função para voltar tabela do Stock
     def voltarAoMenu(self):
-        self.ViewSuppliers.show()
+        self.ViewStock.show()
         self.close()
