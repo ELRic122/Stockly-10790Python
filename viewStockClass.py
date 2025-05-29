@@ -21,7 +21,7 @@ class VisualizarStock(QMainWindow):
     def __init__(self, ViewMenu_ref): # Construtor da classe
         super().__init__() # Inicializa a classe pai
         self.ViewMenu = ViewMenu_ref # Referência ao menu de visualizar registos
-        self.setWindowTitle('Stockly - Gestão de Inventário') # Definir título da janela
+        self.setWindowTitle('Stockly - Vizualizar Produtos') # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
