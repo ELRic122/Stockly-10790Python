@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 import sqlite3
 from exportAsPDF import exportPDF_Stock
 from ViewMostMovedStock import ProdutosMaisMovimentados
+from HistoryStock import HistoricoStock
 
 # Função para conectar á base de dados
 def conectarBD():
@@ -125,6 +126,26 @@ class VisualizarStock(QMainWindow):
                 background-color: #2f3e50;
             }
         """)
+
+        # Botão do Histórico de alterações
+        self.botaoHistoricoStock = QPushButton("Histórico de Alterações")
+        self.botaoHistoricoStock.setFixedSize(300, 50)
+        self.botaoHistoricoStock.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                font-weight: bold;
+                background-color: #1e2c3a;
+                color: white;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #2f3e50;
+            }
+        """)
+
+        # Adiciona o layout do botão do histórico de alterações
+        self.botaoHistoricoStock.clicked.connect(self.gotoHistoricoStock)
+        linha_info_layout.addWidget(self.botaoHistoricoStock)
 
         # Botão dos produtos mais movimentados
         self.buttonMaisMovimentados = QPushButton("Produtos mais Movimentados")
@@ -249,4 +270,10 @@ class VisualizarStock(QMainWindow):
     def abrirMaisMovimentados(self):
         self.janelaMovimentados = ProdutosMaisMovimentados(self)
         self.janelaMovimentados.show()
+        self.hide()
+
+    # Função para ir para o histórico de alterações
+    def gotoHistoricoStock(self):
+        self.HistoricoStock = HistoricoStock(self)
+        self.HistoricoStock.show()
         self.hide()

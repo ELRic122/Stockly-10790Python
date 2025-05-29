@@ -154,7 +154,7 @@ class InserirFornecedores(QMainWindow):
                 cursor.execute("""
                     INSERT INTO historico_Fornecedor (id_Fornecedor, campo_alterado, valor_antigo, valor_novo)
                     VALUES (?, 'INSERÇÃO', '', ?)
-                """, (id_Fornecedor, f"Nome: {nome}, Contacto: {contacto}, Nascimento: {morada}, Morada: {NIF}"))
+                """, (id_Fornecedor, f"Nome: {nome}, Contacto: {contacto}, Morada: {morada}, Morada: {NIF}"))
 
                 conn.commit()
                 QMessageBox.information(self, "Sucesso", "Fornecedor inserido com sucesso!")

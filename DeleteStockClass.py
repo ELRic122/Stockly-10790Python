@@ -226,6 +226,18 @@ class ApagarStock(QMainWindow):
             if conn:
                 cursor = conn.cursor()
                 try:
+                    cursor.execute("SELECT Nome_Produto, Preco_Produto, Quantidade_Produto, ID_Fornecedor FROM Stock WHERE ID_Stock = ?", (id_Stock,))
+                    Stock = cursor.fetchone()
+
+                    if Stock:
+                        Nome_Produto, Preco_Produto, Quantidade_Produto, ID_Fornecedor = Stock
+                        descricao = f"Nome: {Nome_Produto}, Preco Produto: {Preco_Produto}, Quantidade Produto: {Quantidade_Produto},ID Fornecedor: {ID_Fornecedor}"
+                        cursor.execute("""
+                            INSERT INTO historico_Stock (id_Stock, campo_alterado, valor_antigo, valor_novo)
+                            VALUES (?, 'ELIMINAÇÃO', ?, '')
+                        """, (id_Stock, descricao))
+
+                    
                     cursor.execute("DELETE FROM Stock WHERE ID_Stock = ?", (id_Stock,))
                     conn.commit()
                     self.tabela_Stock.removeRow(row)

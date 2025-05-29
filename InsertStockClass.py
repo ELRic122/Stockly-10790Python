@@ -140,8 +140,16 @@ class InserirStock(QMainWindow):
                     VALUES (?, ?, ?, ?)
                 """, (Nome_Produto, Preco_Produto, Quantidade_Produto, ID_Fornecedor)) # Inserir os dados na tabela Stock
                 conn.commit()
+
+                id_Stock = cursor.lastrowid  # Obtém o ID do Stock inserido
+
+                cursor.execute("""
+                    INSERT INTO historico_Stock (id_Stock, campo_alterado, valor_antigo, valor_novo)
+                    VALUES (?, 'INSERÇÃO', '', ?)
+                """, (id_Stock, f"Nome: {Nome_Produto}, Preco Produto: {Preco_Produto}, Quantidade Produto: {Quantidade_Produto}, ID Fornecedor: {ID_Fornecedor}"))
+
+                conn.commit()
                 QMessageBox.information(self, "Sucesso", "Produto inserido com sucesso!")
-                
                 # Limpar os campos de input após a inserção
                 self.input_nome.clear()
                 self.input_preco.clear()
