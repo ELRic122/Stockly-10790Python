@@ -206,6 +206,32 @@ class AlterarVendas(QMainWindow):
         if conn:
             cursor = conn.cursor()
             try:
+                # Buscar os dados antigos das Vendas
+                cursor.execute("SELECT Nome_Produto, Preco_Venda, Quantidade_Venda , ID_Stock, ID_Cliente FROM Vendas WHERE ID_Venda = ?", (self.id_Venda,))
+                antigo = cursor.fetchone()
+                if not antigo:
+                    QMessageBox.critical(self, "Erro", "Venda não encontrado na base de dados.")
+                    return
+
+                campos = ["nome_do_produto", "preco_da_venda", "quantidade_da_venda", "id_stock", "id_cliente"]
+                novos = [
+                    self.campos["nome_do_produto"].text(),
+                    self.campos["preco_da_venda"].text(),
+                    self.campos["quantidade_da_venda"].text(),
+                    self.campos["id_stock"].text(),
+                    self.campos["id_cliente"].text(),
+                ]
+
+                # Guardar alterações no histórico
+                for i, campo in enumerate(campos):
+                    valor_antigo = str(antigo[i]) if antigo[i] is not None else ""
+                    valor_novo = str(novos[i])
+                    if valor_antigo != valor_novo:
+                        cursor.execute("""
+                            INSERT INTO historico_Vendas (ID_Venda, campo_alterado, valor_antigo, valor_novo)
+                            VALUES (?, ?, ?, ?)
+                        """, (self.id_Venda, campo.capitalize(), valor_antigo, valor_novo))
+
                 cursor.execute("""
                     UPDATE Vendas
                     SET Nome_Produto = ?, Preco_Venda = ?, Quantidade_Venda = ?, ID_Stock = ?, ID_Cliente = ?

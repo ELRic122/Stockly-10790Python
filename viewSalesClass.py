@@ -3,6 +3,7 @@ from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
 import sqlite3
 from exportAsPDF import exportPDF_Vendas
+from HistorySales import HistoricoVendas
 
 def conectarBD():
     conn = None
@@ -74,7 +75,7 @@ class Visualizarvendas(QMainWindow):
         topBarLayout = QHBoxLayout()
         topBarLayout.addStretch()
 
-                # Botão voltar
+        # Botão voltar
         self.buttonBack = QPushButton("←")
         self.buttonBack.setFixedSize(60, 60)
         # Estilo do botão voltar
@@ -121,6 +122,28 @@ class Visualizarvendas(QMainWindow):
                 background-color: #2f3e50;
             }
         """)
+
+        # Botão do Histórico de alterações
+        self.botaoHistoricoVendas = QPushButton("Histórico de Alterações")
+        self.botaoHistoricoVendas.setFixedSize(300, 50)
+        self.botaoHistoricoVendas.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                font-weight: bold;
+                background-color: #1e2c3a;
+                color: white;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #2f3e50;
+            }
+        """)
+
+        # Adiciona o layout do botão do histórico de alterações
+        self.botaoHistoricoVendas.clicked.connect(self.gotoHistoricoVendas)
+        linha_info_layout.addWidget(self.botaoHistoricoVendas)
+
+
         # Adiciona o layout do botão para exportar para pdf
         self.buttonPDF.clicked.connect(exportPDF_Vendas)
         linha_info_layout.addWidget(self.buttonPDF)
@@ -220,3 +243,9 @@ class Visualizarvendas(QMainWindow):
     def voltarAoMenu(self):
         self.ViewMenu.show()
         self.close()
+
+    # Função para ir para o histórico de alterações
+    def gotoHistoricoVendas(self):
+        self.HistoricoVendas = HistoricoVendas(self)
+        self.HistoricoVendas.show()
+        self.hide()

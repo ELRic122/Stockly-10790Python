@@ -226,6 +226,19 @@ class ApagarVendas(QMainWindow):
             if conn:
                 cursor = conn.cursor()
                 try:
+
+                    cursor.execute("SELECT Nome_Produto, Preco_Venda, Quantidade_Venda, ID_Stock, ID_Cliente FROM Vendas WHERE ID_Venda = ?", (id_Vendas,))
+                    Vendas = cursor.fetchone()
+
+                    if Vendas:
+                        Nome_Produto, Preco_Venda, Quantidade_Venda, ID_Stock, ID_Cliente = Vendas
+                        descricao = f"Nome: {Nome_Produto}, Preco Venda: {Preco_Venda}, Quantidade Venda: {Quantidade_Venda},ID Stock: {ID_Stock}, ID Cliente: {ID_Cliente}"
+                        cursor.execute("""
+                            INSERT INTO historico_Vendas (id_Venda, campo_alterado, valor_antigo, valor_novo)
+                            VALUES (?, 'ELIMINAÇÃO', ?, '')
+                        """, (id_Vendas, descricao))
+
+                    
                     cursor.execute("DELETE FROM vendas WHERE ID_Venda = ?", (id_Vendas,))
                     conn.commit()
                     self.tabela_Vendas.removeRow(row)

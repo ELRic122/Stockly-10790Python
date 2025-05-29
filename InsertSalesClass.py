@@ -142,6 +142,14 @@ class InserirVendas(QMainWindow):
                     INSERT INTO vendas (Nome_Produto, Preco_Venda, Quantidade_Venda, ID_STOCK, ID_CLIENTE)
                     VALUES (?, ?, ?, ?, ?)
                 """, (Nome_Produto, Preco_Venda, Quantidade_Venda, ID_Stock, ID_Cliente)) # Inserir os dados na tabela vendas
+
+                id_Venda = cursor.lastrowid  # Obtém o ID da Venda inserida
+
+                cursor.execute("""
+                    INSERT INTO historico_Vendas (id_Venda, campo_alterado, valor_antigo, valor_novo)
+                    VALUES (?, 'INSERÇÃO', '', ?)
+                """, (id_Venda, f"Nome: {Nome_Produto}, Preco Venda: {Preco_Venda}, Quantidade Venda: {Quantidade_Venda}, ID Stock: {ID_Stock}, ID Cliente: {ID_Cliente}"))
+
                 conn.commit()
                 QMessageBox.information(self, "Sucesso", "Produto inserido com sucesso!")
                 # Limpar os campos de input após a inserção
