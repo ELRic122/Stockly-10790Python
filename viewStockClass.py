@@ -5,6 +5,7 @@ import sqlite3
 from exportAsPDF import exportPDF_Stock
 from ViewMostMovedStock import ProdutosMaisMovimentados
 from HistoryStock import HistoricoStock
+from TabelaStock import TabelaStockPopup
 
 # Função para conectar á base de dados
 def conectarBD():
@@ -111,6 +112,22 @@ class VisualizarStock(QMainWindow):
         linha_info_layout = QHBoxLayout()
         linha_info_layout.addWidget(self.totalStock)
 
+        self.botaoTabelaStock = QPushButton("Status Stock")
+        self.botaoTabelaStock.setFixedSize(300, 50)
+        self.botaoTabelaStock.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                font-weight: bold;
+                background-color: #1e2c3a;
+                color: white;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #2f3e50;
+            }
+        """)
+        self.botaoTabelaStock.clicked.connect(self.gotoTabelaStock)
+        linha_info_layout.addWidget(self.botaoTabelaStock)
         # Botão de exportar pdf
         self.buttonPDF = QPushButton("Download Lista Stock")
         self.buttonPDF.setFixedSize(300, 50)
@@ -276,4 +293,10 @@ class VisualizarStock(QMainWindow):
     def gotoHistoricoStock(self):
         self.HistoricoStock = HistoricoStock(self)
         self.HistoricoStock.show()
+        self.hide()
+
+    # Função para ir para a Tablea de Stock
+    def gotoTabelaStock(self):
+        self.TabelaStock = TabelaStockPopup(self)
+        self.TabelaStock.show()
         self.hide()
