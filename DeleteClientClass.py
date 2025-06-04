@@ -23,7 +23,7 @@ class ApagarCliente(QMainWindow):
         super().__init__() # Inicializa a classe pai
         self.apagarmenu = apagarmenu_ref # Referência ao menu de apagar registos
 
-        self.setWindowTitle("Stockly - Gestão de Inventário") # Definir título da janela
+        self.setWindowTitle("Stockly - Apagar Cliente") # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
@@ -225,6 +225,17 @@ class ApagarCliente(QMainWindow):
             if conn:
                 cursor = conn.cursor()
                 try:
+                    cursor.execute("SELECT Nome, Contacto, Data_Nascimento, Morada FROM cliente WHERE ID_Cliente = ?", (id_cliente,))
+                    cliente = cursor.fetchone()
+
+                    if cliente:
+                        nome, contacto, data, morada = cliente
+                        descricao = f"Nome: {nome}, Contacto: {contacto}, Nascimento: {data}, Morada: {morada}"
+                        cursor.execute("""
+                            INSERT INTO historico_cliente (id_cliente, campo_alterado, valor_antigo, valor_novo)
+                            VALUES (?, 'ELIMINAÇÃO', ?, '')
+                        """, (id_cliente, descricao))
+                    
                     cursor.execute("DELETE FROM cliente WHERE ID_Cliente = ?", (id_cliente,))
                     conn.commit()
                     self.tabela_clientes.removeRow(row)

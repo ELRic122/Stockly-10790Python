@@ -24,7 +24,7 @@ class InserirCliente(QMainWindow):
         super().__init__() # Inicializa a classe pai
         self.inserirMenu = inserirMenu_ref # Referência ao menu de inserir registos
 
-        self.setWindowTitle("Stockly - Gestão de Inventário") # Definir título da janela
+        self.setWindowTitle("Stockly - Inserir Clientes") # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
@@ -65,6 +65,7 @@ class InserirCliente(QMainWindow):
         self.input_data = self.criarCampo(layout, "DATA NASCIMENTO:", "AAAA-MM-DD") # Campo para inserir a data de nascimento
         self.input_morada = self.criarCampo(layout, "MORADA:", "Inserir morada") # Campo para inserir a morada
 
+        
         # Botão Inserir
         self.botao_inserir = QPushButton("INSERIR")
         self.botao_inserir.setFixedSize(300, 100)
@@ -104,19 +105,25 @@ class InserirCliente(QMainWindow):
         input_field.setPlaceholderText(placeholder)
         input_field.setFixedSize(1000, 50)
 
-        if 'data' in label_texto.lower(): # Mascara de data
-            input_field.setInputMask("0000-00-00") # AAAA-MM-DD
+        # Mascara para a data de nascimento
+        if 'data' in label_texto.lower():
+            input_field.setInputMask('00-00-0000') # Formato DD-MM-AAAA
 
         # Estilo do campo de input
         input_field.setStyleSheet("""
             QLineEdit {
-                background-color: white;
+                border: 2px solid silver;
                 border-radius: 10px;
                 padding: 10px;
+                background-color: white;
+                color: black;
                 font-size: 16px;
             }
+            QLineEdit:focus {
+                border: 2px solid #1E2A38;
+            }
         """)
-
+        
         # Adiciona o label e o campo de input ao layout
         linha_layout.addWidget(label)
         linha_layout.addWidget(input_field)
@@ -146,12 +153,12 @@ class InserirCliente(QMainWindow):
         if not nome or not contacto or not data_nascimento or not morada:
             QMessageBox.warning(self, "Campos incompletos", "Por favor, preencha todos os campos.")
             return
-        
-        # Validar formato da data
+
+        # Utilizador insere a data no formato DD-MM-AAAA mas converte para o formato AAAA-MM-DD para comunicar corretamente com a base de dados.
         try:
-            datetime.strptime(data_nascimento, "%Y-%m-%d") # Verifica se a data está no formato AAAA-MM-DD
+            converterData = datetime.strptime(data_nascimento, "%d-%m-%Y")
         except ValueError:
-            QMessageBox.warning(self, "Data inválida", "A data de nascimento deve estar no formato AAAA-MM-DD.")
+            QMessageBox.warning(self, "Data inválida", "A data de nascimento deve estar no formato DD-MM-AAAA.")
             return
 
         conn = conectarBD() # Conecta à base de dados
@@ -163,7 +170,14 @@ class InserirCliente(QMainWindow):
                 cursor.execute("""
                     INSERT INTO cliente (Nome, Contacto, Data_Nascimento, Morada)
                     VALUES (?, ?, ?, ?) 
-                """, (nome, contacto, data_nascimento, morada)) # Insere os dados na tabela cliente
+                """, (nome, contacto, data_nascimento, morada))  # Insere os dados na tabela cliente
+
+                id_cliente = cursor.lastrowid  # Obtém o ID do cliente inserido
+
+                cursor.execute("""
+                    INSERT INTO historico_cliente (id_cliente, campo_alterado, valor_antigo, valor_novo)
+                    VALUES (?, 'INSERÇÃO', '', ?)
+                """, (id_cliente, f"Nome: {nome}, Contacto: {contacto}, Nascimento: {data_nascimento}, Morada: {morada}"))
 
                 conn.commit()
                 QMessageBox.information(self, "Sucesso", "Cliente inserido com sucesso!")

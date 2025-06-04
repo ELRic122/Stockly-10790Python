@@ -100,24 +100,6 @@ class VisualizarStock(QMainWindow):
         self.buttonBack.clicked.connect(self.voltarAoMenu)
         topBarLayout.addWidget(self.buttonBack)
 
-        self.botaoTabelaStock = QPushButton("Status Stock")
-        self.botaoTabelaStock.setFixedSize(150, 40)
-        self.botaoTabelaStock.setStyleSheet("""
-            QPushButton {
-                font-size: 14px;
-                font-weight: bold;
-                background-color: #1e2c3a;
-                color: white;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background-color: #2d3e50;
-            }
-        """)
-        self.botaoTabelaStock.clicked.connect(self.gotoTabelaStock)
-        topBarLayout.addWidget(self.botaoTabelaStock)
-
-
         layout.addLayout(topBarLayout) # Adiciona o layout do botão voltar
 
         # Layout da barra de pesquisa
@@ -130,6 +112,22 @@ class VisualizarStock(QMainWindow):
         linha_info_layout = QHBoxLayout()
         linha_info_layout.addWidget(self.totalStock)
 
+        self.botaoTabelaStock = QPushButton("Status Stock")
+        self.botaoTabelaStock.setFixedSize(300, 50)
+        self.botaoTabelaStock.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                font-weight: bold;
+                background-color: #1e2c3a;
+                color: white;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #2f3e50;
+            }
+        """)
+        self.botaoTabelaStock.clicked.connect(self.gotoTabelaStock)
+        linha_info_layout.addWidget(self.botaoTabelaStock)
         # Botão de exportar pdf
         self.buttonPDF = QPushButton("Download Lista Stock")
         self.buttonPDF.setFixedSize(300, 50)
@@ -265,6 +263,7 @@ class VisualizarStock(QMainWindow):
             cursor.execute("SELECT ID_Stock, Nome_Produto, Preco_Produto, Quantidade_Produto, ID_Fornecedor FROM Stock") # Seleciona os dados da tabela Stock
             resultados = cursor.fetchall() # Obtém os resultados da consulta
             self.tabela.setRowCount(len(resultados)) # Define o número de linhas da tabela
+            self.totalStock.setText(f'Total de Stock: {len(resultados)}') # Define o número de linhas da tabela
 
             # Preenche a tabela com os dados    
             for i, linha in enumerate(resultados):

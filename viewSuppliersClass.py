@@ -228,6 +228,7 @@ class VisualizarFornecedores(QMainWindow):
             cursor.execute("SELECT ID_Fornecedor, Nome, Contacto, Morada, NIF FROM Fornecedores") # Seleciona os dados da tabela Fornecedores
             resultados = cursor.fetchall() 
             self.tabela.setRowCount(len(resultados)) # Define o número de linhas da tabela
+            self.totalFornecedores.setText(f'Total de Fornecedores: {len(resultados)}') # Define o número de linhas da tabela
 
             # Preenche a tabela com os dados
             for i, linha in enumerate(resultados):
