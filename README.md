@@ -8,6 +8,8 @@ Stockly - Projeto Programação ⇾ Gestão Inventário
 
 **Figma:** https://www.figma.com/design/LTtzdOl46O2TJxqjA41Gue/Untitled?node-id=0-1&p=f&t=QGhiTUuR7azmQ92j-0
 
+**Distribuicao de Tarefas:** https://trello.com/b/Kbqjewch/stockly-projeto-final
+
 
 **Notas:**
 
