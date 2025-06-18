@@ -1,3 +1,5 @@
+**PORTUGUÊS**
+
 # Stockly - Gestão de Inventário
 
 **Stockly** é uma aplicação de gestão de inventário local, desenvolvida em Python, com interface gráfica em PyQt5 e base de dados SQLite3.
@@ -47,6 +49,10 @@
 ```bash
 pip install PyQt5 fpdf
 ```
+
+---
+**ENGLISH**
+
 # Stockly - Inventory Management
 
 **Stockly** is a local inventory management application developed in Python, with a graphical interface using PyQt5 and a SQLite3 database.
