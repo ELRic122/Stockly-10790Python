@@ -19,7 +19,7 @@ class AlterarStock(QMainWindow):
         super().__init__()
         self.alterMenuClass_ref = alterMenuClass_ref# Referência ao menu de Alterar registos
 
-        self.setWindowTitle("Stockly - Gestão de Inventário") # Definir título da janela
+        self.setWindowTitle("Stockly - Alterar Produtos") # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
@@ -206,6 +206,32 @@ class AlterarStock(QMainWindow):
         if conn:
             cursor = conn.cursor()
             try:
+
+                # Buscar os dados antigos do Stock
+                cursor.execute("SELECT Nome_Produto, Preco_Produto, Quantidade_Produto , ID_Fornecedor FROM Stock WHERE ID_Stock = ?", (self.id_Stock,))
+                antigo = cursor.fetchone()
+                if not antigo:
+                    QMessageBox.critical(self, "Erro", "Produto não encontrado na base de dados.")
+                    return
+
+                campos = ["nome_do_produto", "preco_do_produto", "quantidade_de_produto", "id_fornecedor"]
+                novos = [
+                    self.campos["nome_do_produto"].text(),
+                    self.campos["preco_do_produto"].text(),
+                    self.campos["quantidade_de_produto"].text(),
+                    self.campos["id_fornecedor"].text()
+                ]
+
+                # Guardar alterações no histórico
+                for i, campo in enumerate(campos):
+                    valor_antigo = str(antigo[i]) if antigo[i] is not None else ""
+                    valor_novo = str(novos[i])
+                    if valor_antigo != valor_novo:
+                        cursor.execute("""
+                            INSERT INTO historico_Stock (id_Stock, campo_alterado, valor_antigo, valor_novo)
+                            VALUES (?, ?, ?, ?)
+                        """, (self.id_Stock, campo.capitalize(), valor_antigo, valor_novo))
+
                 cursor.execute("""
                     UPDATE Stock
                     SET Nome_Produto = ?, Preco_Produto = ?, Quantidade_Produto = ?, ID_Fornecedor = ?

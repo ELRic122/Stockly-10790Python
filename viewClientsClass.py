@@ -18,6 +18,15 @@ def conectarBD():
 
 # Classe para visualizar clientes
 class VisualizarClientes(QMainWindow):
+
+#Função para exportar o PDF e depois mostrar a mensagem
+    def exportAndShowMsg(self):
+        try:
+            exportPDF_Clientes(self)
+            QMessageBox.information(self, "Exportado o PDF", "Lista de Clientes exportada com sucesso!\nPode encontrar o ficheiro na pasta 'Stockly - Gestão de Inventário\documentos'.")
+        except Exception as e:
+            QMessageBox.critical(self, "Erro", f"Ocorreu um erro ao exportar: {e}")
+
     def __init__(self,ViewMenu_ref): # Construtor da classe
         super().__init__() # Inicializa a classe pai
         self.ViewMenu = ViewMenu_ref # Referência ao menu de visualizar registos
@@ -142,13 +151,12 @@ class VisualizarClientes(QMainWindow):
                 background-color: #2f3e50;
             }
         """)
-
         # Adiciona o layout do botão do histórico de alterações
         self.botaoHistoricoClientes.clicked.connect(self.gotoHistoricoClientes)
         linha_info_layout.addWidget(self.botaoHistoricoClientes)
 
         # Adiciona o layout do botão para exportar para pdf
-        self.buttonPDF.clicked.connect(exportPDF_Clientes)
+        self.buttonPDF.clicked.connect(self.exportAndShowMsg)
         linha_info_layout.addWidget(self.buttonPDF)
         linha_info_layout.addStretch()
 

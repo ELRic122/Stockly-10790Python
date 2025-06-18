@@ -23,7 +23,7 @@ class InserirFornecedores(QMainWindow):
         super().__init__() # Inicializa a classe pai
         self.inserirMenu = inserirMenu_ref # Referência ao menu de inserir registos
 
-        self.setWindowTitle("Stockly - Gestão de Inventário") # Definir título da janela
+        self.setWindowTitle("Stockly - Inserir Fornecedor") # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
@@ -148,6 +148,14 @@ class InserirFornecedores(QMainWindow):
                     INSERT INTO fornecedores (Nome, Contacto, Morada, NIF)
                     VALUES (?, ?, ?, ?)
                 """, (nome, contacto, morada, NIF)) # Inserir os dados na tabela fornecedores
+
+                id_Fornecedor = cursor.lastrowid  # Obtém o ID do Fornecedor inserido
+
+                cursor.execute("""
+                    INSERT INTO historico_Fornecedor (id_Fornecedor, campo_alterado, valor_antigo, valor_novo)
+                    VALUES (?, 'INSERÇÃO', '', ?)
+                """, (id_Fornecedor, f"Nome: {nome}, Contacto: {contacto}, Morada: {morada}, Morada: {NIF}"))
+
                 conn.commit()
                 QMessageBox.information(self, "Sucesso", "Fornecedor inserido com sucesso!")
                 # Limpar os campos de input após a inserção

@@ -17,6 +17,15 @@ def conectarBD():
     
 # Classe para visualizar fornecedores
 class VisualizarFornecedores(QMainWindow):
+
+#Função para exportar o PDF e depois mostrar a mensagem
+    def exportAndShowMsg(self):
+        try:
+            exportPDF_Fornecedores(self)
+            QMessageBox.information(self, "Exportado o PDF", "Lista de Fornecedores exportada com sucesso!\nPode encontrar o ficheiro na pasta 'Stockly - Gestão de Inventário\documentos'.")
+        except Exception as e:
+            QMessageBox.critical(self, "Erro", f"Ocorreu um erro ao exportar: {e}")
+
     def __init__(self,ViewMenu_ref): # Construtor da classe
         super().__init__() # Inicializa a classe pai
         self.ViewMenu = ViewMenu_ref # Referência ao menu de visualizar registos
@@ -148,6 +157,7 @@ class VisualizarFornecedores(QMainWindow):
         linha_info_layout.addWidget(self.botaoHistoricoFornecedores)
 
         # Adiciona o layout do botão para exportar para pdf
+        self.buttonPDF.clicked.connect(self.exportAndShowMsg)
         self.buttonPDF.clicked.connect(exportPDF_Fornecedores)
         linha_info_layout.addWidget(self.buttonPDF)
         linha_info_layout.addStretch()
@@ -228,6 +238,7 @@ class VisualizarFornecedores(QMainWindow):
             cursor.execute("SELECT ID_Fornecedor, Nome, Contacto, Morada, NIF FROM Fornecedores") # Seleciona os dados da tabela Fornecedores
             resultados = cursor.fetchall() 
             self.tabela.setRowCount(len(resultados)) # Define o número de linhas da tabela
+            self.totalFornecedores.setText(f'Total de Fornecedores: {len(resultados)}') # Define o número de linhas da tabela
 
             # Preenche a tabela com os dados
             for i, linha in enumerate(resultados):

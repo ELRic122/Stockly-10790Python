@@ -44,7 +44,6 @@ def exportPDF_Clientes(self):
             linha = f"ID: {cliente[0]} | Nome: {cliente[1]} | Contacto: {cliente[2]} | Data: {cliente[3]} | Morada: {cliente[4]}"
             pdf.multi_cell(0, 10, linha)
             pdf.ln(2)
-
         cursor.close()
         conn.close()
     else:

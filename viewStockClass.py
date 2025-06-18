@@ -19,6 +19,15 @@ def conectarBD():
     
 # Classe para visualizar stock
 class VisualizarStock(QMainWindow):
+
+#Função para exportar o PDF e depois mostrar a mensagem
+    def exportAndShowMsg(self):
+        try:
+            exportPDF_Stock(self)
+            QMessageBox.information(self, "Exportado o PDF", "Lista de Stock exportada com sucesso!\nPode encontrar o ficheiro na pasta 'Stockly - Gestão de Inventário\documentos'.")
+        except Exception as e:
+            QMessageBox.critical(self, "Erro", f"Ocorreu um erro ao exportar: {e}")
+
     def __init__(self, ViewMenu_ref): # Construtor da classe
         super().__init__() # Inicializa a classe pai
         self.ViewMenu = ViewMenu_ref # Referência ao menu de visualizar registos
@@ -185,6 +194,7 @@ class VisualizarStock(QMainWindow):
         linha_info_layout.addWidget(self.buttonMaisMovimentados)
 
         # Adiciona o layout do botão para exportar para pdf
+        self.buttonPDF.clicked.connect(self.exportAndShowMsg)
         self.buttonPDF.clicked.connect(exportPDF_Stock)
         linha_info_layout.addWidget(self.buttonPDF)
         linha_info_layout.addStretch()
@@ -263,6 +273,7 @@ class VisualizarStock(QMainWindow):
             cursor.execute("SELECT ID_Stock, Nome_Produto, Preco_Produto, Quantidade_Produto, ID_Fornecedor FROM Stock") # Seleciona os dados da tabela Stock
             resultados = cursor.fetchall() # Obtém os resultados da consulta
             self.tabela.setRowCount(len(resultados)) # Define o número de linhas da tabela
+            self.totalStock.setText(f'Total de Stock: {len(resultados)}') # Define o número de linhas da tabela
 
             # Preenche a tabela com os dados    
             for i, linha in enumerate(resultados):

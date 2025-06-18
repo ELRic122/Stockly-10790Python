@@ -19,7 +19,7 @@ class AlterarFornecedor(QMainWindow):
         super().__init__()
         self.alterMenuClass_ref = alterMenuClass_ref# Referência ao menu de Alterar registos
 
-        self.setWindowTitle("Stockly - Gestão de Inventário") # Definir título da janela
+        self.setWindowTitle("Stockly - Alterar Fornecedores") # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
@@ -199,6 +199,31 @@ class AlterarFornecedor(QMainWindow):
         if conn:
             cursor = conn.cursor()
             try:
+                # Buscar os dados antigos do fornecedor
+                cursor.execute("SELECT Nome, Contacto, Morada, NIF FROM Fornecedores WHERE ID_Fornecedor = ?", (self.id_Fornecedor,))
+                antigo = cursor.fetchone()
+                if not antigo:
+                    QMessageBox.critical(self, "Erro", "Fornecedor não encontrado na base de dados.")
+                    return
+
+                campos = ["nome", "contacto", "morada", "nif"]
+                novos = [
+                    self.campos["nome"].text(),
+                    self.campos["contacto"].text(),
+                    self.campos["morada"].text(),
+                    self.campos["nif"].text()
+                ]
+
+                # Guardar alterações no histórico
+                for i, campo in enumerate(campos):
+                    valor_antigo = str(antigo[i]) if antigo[i] is not None else ""
+                    valor_novo = str(novos[i])
+                    if valor_antigo != valor_novo:
+                        cursor.execute("""
+                            INSERT INTO historico_Fornecedor (id_Fornecedor, campo_alterado, valor_antigo, valor_novo)
+                            VALUES (?, ?, ?, ?)
+                        """, (self.id_Fornecedor, campo.capitalize(), valor_antigo, valor_novo))
+
                 cursor.execute("""
                     UPDATE Fornecedores
                     SET Nome = ?, Contacto = ?, Morada = ?, NIF =?

@@ -19,7 +19,7 @@ class AlterarCliente(QMainWindow):
         super().__init__()
         self.alterMenuClass_ref = alterMenuClass_ref# Referência ao menu de Alterar registos
 
-        self.setWindowTitle("Stockly - Gestão de Inventário") # Definir título da janela
+        self.setWindowTitle("Stockly - Alterar Clientes") # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
 
@@ -194,28 +194,52 @@ class AlterarCliente(QMainWindow):
         if not self.id_cliente:
             QMessageBox.warning(self, "Erro", "Nenhum cliente carregado.")
             return
+
         conn = conectarBD()
         if conn:
             cursor = conn.cursor()
             try:
-                cursor.execute("""
-                    UPDATE cliente
-                    SET Nome = ?, Contacto = ?, Data_Nascimento = ?, Morada =?
-                    WHERE ID_Cliente = ?
-                """, (
+                # Buscar os dados antigos do cliente
+                cursor.execute("SELECT Nome, Contacto, Data_Nascimento, Morada FROM cliente WHERE ID_Cliente = ?", (self.id_cliente,))
+                antigo = cursor.fetchone()
+                if not antigo:
+                    QMessageBox.critical(self, "Erro", "Cliente não encontrado na base de dados.")
+                    return
+
+                campos = ["nome", "contacto", "data_nascimento", "morada"]
+                novos = [
                     self.campos["nome"].text(),
                     self.campos["contacto"].text(),
                     self.campos["data_nascimento"].text(),
-                    self.campos["morada"].text(),
-                    self.id_cliente
-                ))
+                    self.campos["morada"].text()
+                ]
+
+                # Guardar alterações no histórico
+                for i, campo in enumerate(campos):
+                    valor_antigo = str(antigo[i]) if antigo[i] is not None else ""
+                    valor_novo = str(novos[i])
+                    if valor_antigo != valor_novo:
+                        cursor.execute("""
+                            INSERT INTO historico_cliente (id_cliente, campo_alterado, valor_antigo, valor_novo)
+                            VALUES (?, ?, ?, ?)
+                        """, (self.id_cliente, campo.capitalize(), valor_antigo, valor_novo))
+
+                # Atualizar os dados do cliente
+                cursor.execute("""
+                    UPDATE cliente
+                    SET Nome = ?, Contacto = ?, Data_Nascimento = ?, Morada = ?
+                    WHERE ID_Cliente = ?
+                """, (*novos, self.id_cliente))
+
                 conn.commit()
                 QMessageBox.information(self, "Sucesso", "Cliente atualizado com sucesso.")
+
             except Exception as e:
                 QMessageBox.critical(self, "Erro", f"Erro ao atualizar: {e}")
                 conn.rollback()
             finally:
                 conn.close()
+
 
     # Função para voltar ao menu anterior
     def voltar(self):

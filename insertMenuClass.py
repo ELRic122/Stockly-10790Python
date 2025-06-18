@@ -16,7 +16,7 @@ class InserirMenu(QMainWindow):
         self.mainMenu = mainMenu_ref # Referência ao menu principal
 
         self.setWindowIcon(QIcon('img/icon.png')) # Definir ícone da janela
-        self.setWindowTitle('Stockly - Gestão de Inventário') # Definir título da janela
+        self.setWindowTitle('Stockly - Menu de inserir Registos') # Definir título da janela
         self.setGeometry(70, 50, 1800, 1000) # Definir tamanho da janela
 
         self.centralWidget = QWidget(self) # Cria um widget central

@@ -16,6 +16,15 @@ def conectarBD():
     
 # Classe para visualizar vendas
 class Visualizarvendas(QMainWindow):
+
+#Função para exportar o PDF e depois mostrar a mensagem
+    def exportAndShowMsg(self):
+        try:
+            exportPDF_Vendas(self)
+            QMessageBox.information(self, "Exportado o PDF", "Lista de Vendas exportada com sucesso!\nPode encontrar o ficheiro na pasta 'Stockly - Gestão de Inventário\documentos'.")
+        except Exception as e:
+            QMessageBox.critical(self, "Erro", f"Ocorreu um erro ao exportar: {e}")
+
     def __init__(self,ViewMenu_ref): # Construtor da classe
         super().__init__() # Inicializa a classe pai
         self.ViewMenu = ViewMenu_ref # Referência ao menu de visualizar registos
@@ -145,13 +154,14 @@ class Visualizarvendas(QMainWindow):
 
 
         # Adiciona o layout do botão para exportar para pdf
+        self.buttonPDF.clicked.connect(self.exportAndShowMsg)
         self.buttonPDF.clicked.connect(exportPDF_Vendas)
         linha_info_layout.addWidget(self.buttonPDF)
         linha_info_layout.addStretch()
 
         layout.addLayout(linha_info_layout)        
 
-       # Tabela configurada
+        # Tabela configurada
         self.configurarTabela()
         self.tabela.setColumnCount(6) # Definir número de colunas da tabela
         self.tabela.setHorizontalHeaderLabels(["ID VENDA","NOME PRODUTO", "PREÇO DA VENDA", "QUANTIDADE DA VENDA", "ID STOCK", "ID CLIENTE"]) # Definir cabeçalho da tabela
@@ -212,7 +222,7 @@ class Visualizarvendas(QMainWindow):
         self.tabela.horizontalHeader().setStretchLastSection(True)
         self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-     # Função para carregar dados na tabela
+    # Função para carregar dados na tabela
     def carregarDados(self):
         conn = conectarBD() # Conectar à base de dados
         if conn is None: # Verifica se a conexão foi bem-sucedida
@@ -224,6 +234,7 @@ class Visualizarvendas(QMainWindow):
             cursor.execute("SELECT ID_Venda, Nome_Produto, Preco_Venda, Quantidade_Venda, ID_Stock, ID_Cliente FROM Vendas") # Seleciona os dados da tabela Vendas
             resultados = cursor.fetchall() # Obtém os resultados da consulta
             self.tabela.setRowCount(len(resultados)) # Define o número de linhas da tabela
+            self.totalVendas.setText(f'Total de Vendas: {len(resultados)}') # Define o número de linhas da tabela
 
             # Preenche a tabela com os dados
             for i, linha in enumerate(resultados):
