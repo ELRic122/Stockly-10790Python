@@ -1,30 +1,48 @@
-# Stockly-10790Python
-Stockly - Projeto Programação ⇾ Gestão Inventário
+# Stockly - Gestão de Inventário
 
-# Links de trabalho:
-**Docs:** https://docs.google.com/document/d/11_MzBAp5Jw3MxyjOu0yr3ZExloxyqeURfewOYpecQNc/edit?tab=t.0
+**Stockly** é uma aplicação de gestão de inventário local, desenvolvida em Python, com interface gráfica em PyQt5 e base de dados SQLite3.
 
-**Canva:** https://www.canva.com/design/DAGkDWEMrTE/dF5K80rTtfFWIDSK6G6bnQ/edit
+⚠️ **Nota importante:**  
+É necessário executar o programa em modo administrador ou instalá-lo numa pasta fora de `C:\Program Files\` para garantir permissões corretas de escrita na base de dados.
 
-**Figma:** https://www.figma.com/design/LTtzdOl46O2TJxqjA41Gue/Untitled?node-id=0-1&p=f&t=QGhiTUuR7azmQ92j-0
+---
 
-**Distribuicao de Tarefas:** https://trello.com/b/Kbqjewch/stockly-projeto-final
+## Instalação
 
+### 1️⃣ Instalar o programa
 
-**Notas:**
+1. Abrir o ficheiro de instalação `setup.exe`.
+2. Seguir o assistente de instalação.
 
-Colocar o programa online, para qualquer pessoa puder utilizar? Pode haver problemas com a base de dados? Pesquisar sobre.
+### 2️⃣ Permissões de administrador
 
-Fazer um programa “bonito” e não o hospedar, o cliente baixa o programa e a base de dados e criada e guardada localmente no PC e depois o mesmo pode fazer o upload dela para um serviço de cloud (tira a compatibilidade entre diversos dispositivos).
+- Se instalar fora de `C:\Program Files\`, pode abrir normalmente.
+- Se instalar dentro de `C:\Program Files\`:
+  - Clicar com o botão direito no `Stockly.exe`.
+  - Ir a **Propriedades > Compatibilidade > Executar este programa como administrador**.
+  - Carregar em **Aplicar** e fechar.
 
-Run Python scripts in the browser(https://medium.com/codex/run-python-scripts-in-the-web-browser-afb09c4b212f) ⇾ incorporar código Python num website.
+---
 
-Automate the boring stuff (https://automatetheboringstuff.com/) ⇾ automatização em Python, projetos reais.
+## Requisitos Técnicos
 
-PyQt6 website oficial (https://pypi.org/project/PyQt6/) ⇾ necessário para tornar o programa executável.
+- Python 3.13.11 (apenas se for executar o código-fonte)
+- PyQt5
+- FPDF
+- SQLite3 (já incluído no Python)
 
-Exemplos PyQt GitHub (https://github.com/pyqt/examples) ⇾ Exemplos PyQt.
+---
 
-Pushing changes without fucking the master branch (https://gist.github.com/abelcallejo/a7f35d9277417560b4c5a7178f8677d1) ⇾ criar branches sem rebentar o código principal.
+## Como Executar
 
-Reddit Documentacao Tecnica (https://www.reddit.com/r/technicalwriting/comments/113mh5p/technical_documentation_templatessamplesexamples/?rdt=64523) ⇾ Documentação Técnica
+### Opção 1 - Executável (recomendado para utilizadores)
+
+- Executar o ficheiro `Stockly.exe` em modo administrador.
+- Garantir que o ficheiro `stockly.db` e as pastas `img/` e `documentos/` estão no mesmo diretório.
+
+### Opção 2 - Executar o código-fonte
+
+1. Instalar Python 3.13.11
+2. Instalar as dependências:
+```bash
+pip install PyQt5 fpdf
