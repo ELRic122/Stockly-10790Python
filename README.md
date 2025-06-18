@@ -46,7 +46,7 @@
 2. Instalar as dependências:
 ```bash
 pip install PyQt5 fpdf
-
+```
 # Stockly - Inventory Management
 
 **Stockly** is a local inventory management application developed in Python, with a graphical interface using PyQt5 and a SQLite3 database.
