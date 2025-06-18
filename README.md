@@ -61,6 +61,7 @@ pip install PyQt5 fpdf
 
 ⚠️ **Important note:**  
 You must run the program as Administrator or install it in a folder other than `C:\Program Files\` to ensure proper write permissions on the database.
+
 ⚠️ **Warning:** Some antivirus programs may mistakenly flag this application as a threat (false positive). The software is safe.
 
 ---
