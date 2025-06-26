@@ -59,7 +59,7 @@ def exportPDF_Fornecedores(self):
 
     # Titulo
     pdf.set_font("Arial", 'B', 14)
-    pdf.cell(0, 10, "Lista de Clientes", ln=True, align="C")
+    pdf.cell(0, 10, "Lista de Fornecedores", ln=True, align="C")
     pdf.ln(10)
 
     # Conectar à Base de Dados Cliente
@@ -90,7 +90,7 @@ def exportPDF_Stock(self):
 
     # Titulo
     pdf.set_font("Arial", 'B', 14)
-    pdf.cell(0, 10, "Lista de Clientes", ln=True, align="C")
+    pdf.cell(0, 10, "Lista de Stock", ln=True, align="C")
     pdf.ln(10)
 
     # Conectar à Base de Dados Cliente
@@ -121,7 +121,7 @@ def exportPDF_Vendas(self):
 
     # Titulo
     pdf.set_font("Arial", 'B', 14)
-    pdf.cell(0, 10, "Lista de Clientes", ln=True, align="C")
+    pdf.cell(0, 10, "Lista de Vendas", ln=True, align="C")
     pdf.ln(10)
 
     # Conectar à Base de Dados Cliente
